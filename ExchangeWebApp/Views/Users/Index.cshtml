@@ -1,0 +1,213 @@
+﻿@model IEnumerable<UserDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">TopUp List</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">ID</th>
+                    <th class="card-title text-center">Name</th>
+                    <th class="card-title text-center">Pass</th>
+                    <th class="card-title text-center">Role</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblTopUpList">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("CreateUsers", "Users", FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exchangeModalLabel">TopUp Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="exchangeModalContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button  type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exchangeModalUpdate" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("UpdateUsers", "Users", FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exchangeModalLabelUpdate">TopUp Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="exchangeModalContentUpdate"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+
+            $("#btSave").click(function () {
+                var formData = new FormData();
+                formData.append("id", $("#Id").val());
+                formData.append("name", $("#Name").val());
+                formData.append("password", $("#Password").val());
+                formData.append("role", $("#Role").val());
+
+                console.log(formData);
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("UpdateUsers", "Users")',
+                    //contentType: 'application/json;charset=utf-8',
+                    //dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (result) {
+                        //console.log(result);
+
+                        if (result.status >= 1) {
+                            $('#topUpModal').modal('hide');
+                            loadData();
+                        }
+                        alert(result.message);
+                    },
+                    error: function (xhr, error) {
+                        //alert(xhr.responseText);
+                        console.log(xhr);
+                    }
+                });
+            });
+
+            ////////
+        });
+
+        function loadData() {
+            $.ajax({
+                url: '@Url.Action("GetAll", "Users")',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result, function (key, item) {
+                        //console.log(item);
+                        html += '<tr>';
+                        html += '<td>' + item.id + '</td>';
+                        html += '<td>' + item.name + '</td>';
+                        html += '<td>' + item.password + '</td>';
+                        html += '<td>' + item.role + '</td>';
+                        html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteUser(\'' + item.id + '\')">Delete</a></td>';
+                        html += '</tr>';
+                    });
+                    $('.tblTopUpList').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function add() {
+            $("#exchangeModalContent").html("");
+            $("#exchangeModalLabel").html("Add New");
+
+            $.ajax({
+                url: '@Url.Action("Create", "Users")',
+                type: "GET",
+                success: function (result) {
+                    $("#exchangeModalContent").html(result);
+                    $('#exchangeModal').modal('show');
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+            loadData();
+        }
+
+        
+        function edit(id) {
+            $("#topUpModalContentUpdate").html("");
+            $("#topUpModalLabelUpdate").html("Update");
+
+            var formData = new FormData();
+            formData.append("Id", id);
+            $.ajax({
+                url: '@Url.Action("GetUser", "Users")',
+                type: "GET",
+                data: { id: id },
+                success: function (result) {
+                    $("#exchangeModalContentUpdate").html(result);
+                    $('#exchangeModalUpdate').modal('show');
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+            loadData();
+        }
+
+        function deleteUser(id) {
+            var result = confirm("Are you sure to delete?");
+            if (result) {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteUsers", "Users")',
+                    type: "DELETE",
+                    data: { id: id },
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            $('#topUpModal').modal('hide');
+                            loadData();
+                        }
+                       
+                    },
+                    error: function (message) {
+                       
+                    }
+                });
+            }
+            loadData();
+        }
+    </script>
+}
