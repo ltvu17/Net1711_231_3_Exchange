@@ -17,7 +17,10 @@ namespace ExchangeWebApp.Controllers
         {
             return View();
         }
-
+        public IActionResult UserProfile()
+        {
+            return View("~/Views/Home/UserProfile.cshtml");
+        }
         public IActionResult Privacy()
         {
             return View();

@@ -25,6 +25,21 @@ public partial class Transaction
     [Column(TypeName = "text")]
     public string? Note { get; set; }
 
+    public double? Price { get; set; }
+
+    [Column("createAt", TypeName = "datetime")]
+    public DateTime? CreateAt { get; set; }
+
+    [Column("studentBuy")]
+    public int? StudentBuy { get; set; }
+
+    [Column("totalPrice")]
+    public double? TotalPrice { get; set; }
+
+    [Column("typeTransactions")]
+    [StringLength(255)]
+    public string? TypeTransactions { get; set; }
+
     [InverseProperty("Transaction")]
     public virtual ICollection<Exchange> Exchanges { get; set; } = new List<Exchange>();
 

@@ -29,6 +29,16 @@ public partial class Comment
     [Column("reply_id")]
     public int? ReplyId { get; set; }
 
+    [Column("status")]
+    public int? Status { get; set; }
+
+    [Column("modify_at", TypeName = "datetime")]
+    public DateTime? ModifyAt { get; set; }
+
+    [Column("imageId")]
+    [StringLength(255)]
+    public string? ImageId { get; set; }
+
     [ForeignKey("ProductId")]
     [InverseProperty("Comments")]
     public virtual Product Product { get; set; } = null!;

@@ -36,6 +36,25 @@ public partial class Student
     [StringLength(450)]
     public string UserId { get; set; } = null!;
 
+    public int? TotalPost { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? InactiveIn { get; set; }
+
+    [StringLength(255)]
+    [Unicode(false)]
+    public string? InactiveReason { get; set; }
+
+    [StringLength(255)]
+    [Unicode(false)]
+    public string? SeftDescription { get; set; }
+
+    [StringLength(450)]
+    public string? Images { get; set; }
+
     [InverseProperty("Student")]
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 

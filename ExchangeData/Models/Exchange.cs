@@ -22,6 +22,27 @@ public partial class Exchange
     [Column("status")]
     public int Status { get; set; }
 
+    [Column("send_date", TypeName = "datetime")]
+    public DateTime? SendDate { get; set; }
+
+    [Column("receive_date", TypeName = "datetime")]
+    public DateTime? ReceiveDate { get; set; }
+
+    [Column("cancel_date", TypeName = "datetime")]
+    public DateTime? CancelDate { get; set; }
+
+    [Column("cancel_reason")]
+    public string? CancelReason { get; set; }
+
+    [Column("shipCost")]
+    public double? ShipCost { get; set; }
+
+    [Column("shipCode")]
+    public string? ShipCode { get; set; }
+
+    [Column("shipStatus")]
+    public int? ShipStatus { get; set; }
+
     [ForeignKey("ExchangeId")]
     [InverseProperty("Exchanges")]
     public virtual Product ExchangeNavigation { get; set; } = null!;

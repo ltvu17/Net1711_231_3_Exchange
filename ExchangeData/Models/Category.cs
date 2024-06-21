@@ -21,6 +21,25 @@ public partial class Category
     [Column(TypeName = "text")]
     public string? Note { get; set; }
 
+    [StringLength(255)]
+    public string? Description { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? ModifiedDate { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public int? DisplayOrder { get; set; }
+
+    [StringLength(255)]
+    public string? MetaKeywords { get; set; }
+
+    [StringLength(255)]
+    public string? MetaDescription { get; set; }
+
+    [StringLength(255)]
+    public string? ThumbnailImage { get; set; }
+
     [InverseProperty("Category")]
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

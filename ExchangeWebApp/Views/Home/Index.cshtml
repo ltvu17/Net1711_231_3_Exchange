@@ -2,7 +2,46 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-md" style="">
+    <div class="row" style="max-height: 600px" >
+        <div class="col-lg-8" style="overflow:auto; max-height: 600px">
+            @for (var i = 0; i < 5; i++)
+            {
+                <div class="align-content-center align-items-center text-center" style="margin: 5%;">
+                    @*   <div class="col" style="margin: 5%"> *@
+                    <div style="border-bottom: solid 1px; width: 100%">
+                        <div style="display: flex;">
+                            <img src="../imgs/2.png" alt="avatar" style="width: 50px; height: 50px; border-radius: 25px; display:table-column; margin-bottom: 10px"></img>
+                            <div style="margin-left: 1%">
+                                <h6>UserName</h6>
+                                <p style="margin-left: 10px; font-weight:100 ; font-size: small">21/06/2024</p>
+                            </div>
+                        </div>
+                        <a href="#" style="">
+                        <div>
+                            <img src="../imgs/product.jpg" alt="haha" style="width: 100%; max-height: 200% ;display:table-column; border-radius: 10px; padding-bottom: 5px"></img>
+                        </div>
+                        </a>
+                        <div style="text-align : start">
+                            <p style="font-weight: 500">This is title sample</p>
+                            <p style="font-weight: 300">This is description sample</p>
+                        </div>
+  
+                    </div>
+                    @* </div> *@
+                </div>
+            }
+        </div>
+        <div class="col-lg-4" >
+            <div>
+                <p>This is description</p>
+ 
+            </div>
+        </div>
+    </div>
+    <div style="float: right">
+        <button class="btn btn-danger">Report</button>
+        <button class="btn btn-success" style="">Exchange</button>
+        <button class="btn btn-success" style="">Order</button>
+    </div>
 </div>
