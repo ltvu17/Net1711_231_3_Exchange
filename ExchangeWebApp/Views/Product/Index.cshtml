@@ -8,6 +8,8 @@
         <div class="col-md-10">
             <h3 class="display-8">Product List</h3>
         </div>
+        <input type="file" id="imageFile">
+        <button onclick="uploadImage(document.getElementById('imageFile').files[0])">Upload Ảnh</button>
         <div class="col-md-2 text-end">
             <button type="button" class="btn btn-primary" onclick="add()">
                 Add
@@ -101,7 +103,58 @@
     </div>
 
     @section scripts {
+        <script src="https://www.gstatic.com/firebase/js/v8.10.1/firebase.app.js"></script>
+        <script src="https://www.gstatic.com/firebase/js/v8.10.1/firebase.storage.js"></script>
+
+        <script type="module">
+            
+
+        </script>
         <script type="text/javascript">
+            const firebaseConfig = {
+                apiKey: "AIzaSyAzn0vGQC-uEwDJVBuf4ksooichPt9A9JY",
+                authDomain: "exchange-products-a33d6.firebaseapp.com",
+                projectId: "exchange-products-a33d6",
+                storageBucket: "exchange-products-a33d6.appspot.com",
+                messagingSenderId: "456042953983",
+                appId: "1:456042953983:web:e6ac9a09da7f73149520ca",
+                measurementId: "G-NWCCH1FQ11"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+
+            const storage = getStorage(app);
+            function uploadImage(imageFile) {
+                if (!imageFile) {
+                    alert("Hãy chọn hình!");
+                    return;
+                }
+                const storageRef = storage.ref('images/' + imageFile.name);
+                const uploadTask = storageRef.put(imageFile);
+
+                // Xử lý tiến trình upload (tùy chọn)
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Theo dõi sự kiện thay đổi trạng thái như tiến trình, tạm dừng và tiếp tục
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload đã hoàn thành ' + progress + '%');
+                    },
+                    (error) => {
+                        console.error('Upload thất bại:', error);
+                    },
+                    () => {
+                        console.log('Upload hoàn tất!');
+
+                        // Lấy URL ảnh đã upload
+                        storageRef.getDownloadURL().then((url) => {
+                            console.log('URL ảnh:', url);
+                            // Bạn có thể sử dụng URL này để hiển thị ảnh hoặc lưu trữ trong database
+                        });
+                    }
+                );
+            }
+
             $(document).ready(function () {
                 loadData();
             });
