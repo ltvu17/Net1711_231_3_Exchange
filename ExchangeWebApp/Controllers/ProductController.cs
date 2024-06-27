@@ -3,20 +3,43 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
 using ProductDTO = ExchangeWebApp.Models.ProductDTO;
+using Firebase.Storage;
 
 namespace ExchangeWebApp.Controllers
 {
     public class ProductController : Controller
     {
-        private String apiUrl = "https://localhost:7134/api/Product/";
-        public ProductController()
-        {
+        private readonly IWebHostEnvironment _env;
 
+        public ProductController(IWebHostEnvironment env)
+        {
+            _env = env;
         }
+
+        private String apiUrl = "https://localhost:7134/api/Product/";
         public IActionResult Index()
         {
             return View("~/Views/Product/Index.cshtml");
         }
+
+        public async Task OnPostAsync(IFormFile photo)
+        {
+            
+            using (var httpClient = new HttpClient())
+            {
+                var json = JsonConvert.SerializeObject(photo);
+                var data = new StringContent(json, Encoding.UTF8, "application/json");
+                using (var response = await httpClient.PostAsync(apiUrl + "UploadProduct", data))
+
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("dung");
+                    }
+                }
+            }
+        }
+
 
         public async Task<List<ProductDTO>> GetAll()
         {

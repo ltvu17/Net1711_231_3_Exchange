@@ -1,17 +1,24 @@
 ﻿using ExchangeBusiness;
 using ExchangeData.Models;
 using Microsoft.AspNetCore.Mvc;
+using Firebase.Storage;
+
 
 namespace ExchangeWebAPI.Controllers
 {
+    
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
+        private readonly IWebHostEnvironment _env;
         private readonly ProductBusiness _business;
-        public ProductController()
+        public ProductController(IWebHostEnvironment env)
         {
             _business = new ProductBusiness();
+            _env = env;
         }
         [HttpGet]
         [Route("GetProducts")]
@@ -57,7 +64,32 @@ namespace ExchangeWebAPI.Controllers
                 return NotFound(result);
             }
         }
+        [HttpPost]
+        [Route("UploadProduct")]
+        public async Task OnPostAsync(IFormFile photo)
+        {
+            string basePath = "https://exchange-products-a33d6-default-rtdb.firebaseio.com/";
+            string authSecret = "YXwxp8JigbbNNXqdXGn2jDNpE2ZJwnt4Olz1Hyrj";
+            IFirebaseClient
 
+            var path = Path.Combine(_env.ContentRootPath, "Uploads", photo.FileName);
+            var stream = new FileStream(path, FileMode.Create);
+            await photo.CopyToAsync(stream);
+
+            // Tên tệp
+            var fileName = photo.FileName;
+
+            // Tải lên Firebase Storage
+            var task = await new FirebaseStorage("exchange-products-a33d6.appspot.com", new FirebaseStorageOptions
+            {
+                ThrowOnCancel = true
+            })
+            .Child("image-product")
+            .Child($"IMAGE_{Guid.NewGuid()}{Path.GetExtension(fileName)}")
+            .PutAsync(stream);
+
+            stream.Close();
+        }
         [HttpPut]
         [Route("UpdateProduct")]
         public async Task<IActionResult> UpdateProduct(Product product)
