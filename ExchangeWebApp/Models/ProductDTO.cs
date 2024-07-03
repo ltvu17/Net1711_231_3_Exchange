@@ -6,30 +6,32 @@ namespace ExchangeWebApp.Models
     {
         public int Id { get; set; }
 
-    public string Name { get; set; }
+        public string Name { get; set; }
 
-    public int Quantity { get; set; }
+        public int Quantity { get; set; }
 
-    public int Status { get; set; } = 1;
+        public int Status { get; set; } = 1;
 
-    public int StudentId { get; set; } = 2;
+        public int StudentId { get; set; } = 2;
 
         public DateTime CreateOn { get; set; } = new DateTime();
 
-    public DateTime ReportTime { get; set; }
+        public DateTime? ReportTime { get; set; }
 
-    public double? Rate { get; set; }
+        public double? Rate { get; set; }
 
-    public string Title { get; set; }
+        public string Title { get; set; }
 
-    public string? ContentPost { get; set; }
+        public string? ContentPost { get; set; }
 
-    public double Price { get; set; }
+        public double Price { get; set; }
 
-    public string ApproveBy { get; set; }
+        public string? ImgKey { get; set; }
 
-    public DateTime? ApproveDate { get; set; }
+        public string? ApproveBy { get; set; }
 
-    public int CategoryId { get; set; }
+        public DateTime? ApproveDate { get; set; }
+
+        public int CategoryId { get; set; }
     }
 }

@@ -1,17 +1,24 @@
 ﻿using ExchangeBusiness;
+using ExchangeData;
 using ExchangeData.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 
 namespace ExchangeWebAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         private readonly ProductBusiness _business;
-        public ProductController()
+        private readonly ICommonService _commonService;
+        private readonly UnitOfWork _unitOfWork;
+        public ProductController(ICommonService commonService)
         {
+            _commonService = commonService;
             _business = new ProductBusiness();
+            _unitOfWork = new UnitOfWork();
         }
         [HttpGet]
         [Route("GetProducts")]
@@ -47,17 +54,37 @@ namespace ExchangeWebAPI.Controllers
         public async Task<IActionResult> CreateProduct(Product product)
         {
             var result = await _business.CreateProduct(product);
-            if (result.Status > 0 && result != null)
+            if (result is null || result.Status == -4)
             {
-                var products = result.Data as Product;
-                return Ok(products);
+                return BadRequest();
+            }
+            return Ok(result);
+        }
+        [HttpPost]
+        [Route("UploadImg")]
+        public async Task<IActionResult> UploadImgProduct(int Id, IFormFile img)
+        {
+            Product product = await _unitOfWork.ProductRepository.GetByIdAsync(Id);
+            if(product != null)
+            {
+                var imageUrl = await _commonService.UploadAnImage(img, "ProductImg", Id.ToString());
+                product.ImgKey = imageUrl;
+                var result = await _business.UpdateProduct(product);
+                if (result.Status > 0 && result != null)
+                {
+                    var productR = result.Data as Product;
+                    return Ok(productR);
+                }
+                else
+                {
+                    return NotFound(result);
+                }
             }
             else
             {
-                return NotFound(result);
+                return NotFound();
             }
         }
-
         [HttpPut]
         [Route("UpdateProduct")]
         public async Task<IActionResult> UpdateProduct(Product product)
