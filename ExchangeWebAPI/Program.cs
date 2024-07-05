@@ -6,6 +6,8 @@ namespace ExchangeWebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddScoped<ICommonService, CommonService>();
             // Add services to the container.
 
             builder.Services.AddControllers();

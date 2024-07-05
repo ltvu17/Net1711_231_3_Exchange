@@ -1,15 +1,21 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
-}
-<div class="text-center">
-    <div class="row">
-        <div class="col-md-10">
+@model ProductDTO
+<div class="text-start">
+    <div class="row justify-content-between">
+        <div class="col-md-3">
             <h3 class="display-8">Product List</h3>
         </div>
-        <div class="col-md-2 text-end">
-            <button type="button" class="btn btn-primary" onclick="add()">
+        <div class="col-md-5 text-end d-flex justify-content-between">
+            <input type="text" class="form-control m-1" id="keyFind" placeholder="Search...."/>
+            <select id="methodFind" class="form-control m-1" style="width:90px">
+                <option value="1">Name</option>
+                <option value="2">Title</option>
+                <option value="3">Content</option>
+            </select>
+            <button class="btn btn-primary m-1" id="btnFind" style="min-width:80px" type="button" onclick="searchProduct()">Search</button>
+            <button type="button" class="btn btn-primary m-1" style="min-width:80px" data-bs-toggle="modal" data-bs-target="#addModal">
                 Add
             </button>
         </div>
@@ -32,6 +38,7 @@
                         <th class="card-title text-center">Approve By</th>
                         <th class="card-title text-center">Approve Date</th>
                         <th class="card-title text-center">Category Id</th>
+                        <th class="card-title text-center">Image</th>
                         <th class="card-title text-center">Action</th>
                     </tr>
                 </thead>
@@ -41,15 +48,16 @@
         </div>
     </div>
 
-    <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 
                     <div class="modal-header">
-                        <h5 class="modal-title" id="topUpModalLabel">Product</h5>
+                        <h5 class="modal-title" id="addLabel">Add Product</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                    <form method="post" id="addForm" asp-action="CreateProduct" asp-controller="Product" enctype="multipart/form-data">
                         <div id="topUpModalContent">
                             <div class="row">
                                 <div class="col-md-4 text-start">
@@ -58,54 +66,88 @@
                                 </div>
                                 <div class="col-md-4 text-start">
                                     <label for="dgb" class="col-form-label">Product Name:</label>
-                                    <input type="text" class="form-control"  id="pname">
+                                    <input type="text" class="form-control" asp-for="Name"  id="pname">
                                 </div>
                                 <div class="col-md-4 text-start">
                                     <label for="quantity" class="col-form-label">Quantity:</label>
-                                    <input type="text" class="form-control" id="quantity">
+                                    <input type="text" class="form-control" asp-for="Quantity" id="quantity">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 text-start">
                                     <label for="title" class="col-form-label">Title:</label>
-                                    <input type="text" class="form-control" id="title">
+                                    <input type="text" class="form-control" asp-for="Title" id="title">
                                 </div>
                                 <div class="col-md-8 text-start">
                                     <label for="content" class="col-form-label">Content:</label>
-                                    <input type="text" class="form-control" id="content">
+                                    <input type="text" class="form-control" asp-for="ContentPost" id="content">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 text-start">
                                     <label for="price" class="col-form-label">Price:</label>
-                                    <input type="text" class="form-control" id="price">
+                                    <input type="text" class="form-control" asp-for="Price" id="price">
                                 </div>
                                 <div class="col-md-4 text-start">
+
                                     <label for="cateId" class="col-form-label">Category Id:</label>
-                                    <input type="text" class="form-control" id="cateid">
+                                    @Html.DropDownListFor(model => model.CategoryId, new SelectList(new[] {
+                                    new { Value = 1, Text = "Cate1" },
+                                    new { Value = 2, Text = "Cate2" },
+                                    new { Value = 1002, Text = "Cate3" }
+                                    }, "Value", "Text"), new { @class = "form-control" })
                                 </div>
-                                <div class="col-md-4 text-start">
-                                    <label for="sid" class="col-form-label">Student Id:</label>
-                                    <input type="text" class="form-control" id="sid">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8 text-start">
+                                    <label for="imgP" class="col-form-label">Image Path:</label>
+                                    <input type="file" class="form-control" id="img" name="img"/>
                                 </div>
                             </div>
                         </div>
+                    </form>
                     </div>
                     <div class="modal-footer">
-                        <button id="btSave" type="button" class="btn btn-primary" onclick="submit()">Save</button>
+                    <button id="btSave" type="button" class="btn btn-primary" onclick="submitAdd()">Save</button>
                         <button type="button" id="btnCloseModal" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
-                
             </div>
         </div>
     </div>
 
+
+    <div class="modal fade" id="exchangeModalUpdate" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                @using (Html.BeginForm("UpdateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data", name = "frm", id = "frm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exchangeModalLabelUpdate">TopUp Transaction</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="exchangeModalContentUpdate"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
     @section scripts {
         <script type="text/javascript">
+            var loadedList = [];
             $(document).ready(function () {
                 loadData();
             });
-
+            function submitAdd(){
+                document.getElementById("addForm").submit();
+            }
             function loadData() {
                 $.ajax({
                     url: '@Url.Action("GetAll", "Product")',
@@ -115,19 +157,21 @@
                     success: function (result) {
                         var html = '';
                         $.each(result, function (key, item) {
+                            loadedList.push(item);
                             html += '<tr>';
-                            html += '<td>' + item.id + '</td>';
-                            html += '<td>' + item.name + '</td>';
-                            html += '<td>' + item.quantity + '</td>';
-                            html += '<td>' + item.createOn + '</td>';
-                            html += '<td>' + item.reportTime + '</td>';
-                            html += '<td>' + item.title + '</td>';
-                            html += '<td>' + item.rate + '</td>';
-                            html += '<td>' + item.contentPost + '</td>';
-                            html += '<td class="text-end">' + item.price + '</td>';
-                            html += '<td class="text-end">' + item.approveBy + '</td>';
-                            html += '<td class="text-end">' + item.approveDate + '</td>';
-                            html += '<td class="text-end">' + item.categoryId + '</td>';
+                            html += '<td class="fs-6">' + item.id + '</td>';
+                            html += '<td class="fs-6">' + item.name + '</td>';
+                            html += '<td class="fs-6">' + item.quantity + '</td>';
+                            html += '<td class="fs-6">' + item.createOn + '</td>';
+                            html += '<td class="fs-6">' + item.reportTime + '</td>';
+                            html += '<td class="fs-6">' + item.title + '</td>';
+                            html += '<td class="fs-6">' + item.rate + '</td>';
+                            html += '<td class="fs-6">' + item.contentPost + '</td>';
+                            html += '<td class="text-end fs-6">' + item.price + '</td>';
+                            html += '<td class="text-end fs-6">' + item.approveBy + '</td>';
+                            html += '<td class="text-end fs-6">' + item.approveDate + '</td>';
+                            html += '<td class="text-end fs-6">' + item.categoryId + '</td>';
+                            html += '<td class="text-end"><img src="' + (item.imgKey ? item.imgKey : "../imgs/loading.png") + '" style="width:auto; height:100px"/></td>';
                             html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
                             html += '</tr>';
                         });
@@ -138,43 +182,60 @@
                     }
                 });
             }
-
-            function add() {
-                $("#topUpModalLabel").html("Add New");
-                $('#topUpModal').modal('show');
-                document.getElementById("pid").value = null;
-                document.getElementById("pname").value = null;
-                document.getElementById("quantity").value = null;
-                document.getElementById("title").value = null;
-                document.getElementById("content").value = null;
-                document.getElementById("price").value = null;
-                document.getElementById("cateid").value = null;
-                document.getElementById("sid").value = null;
-            }
             var selectedProduct;
+            function searchProduct() {
+                var keyF = document.getElementById("keyFind").value ? document.getElementById("keyFind").value : " ";
+                var methodF = document.getElementById("methodFind").value ? document.getElementById("methodFind").value : 0;
+                if (keyF == " " || methodF == 0) loadData();
+                else {
+                    var html = '';
+                    $.each(loadedList, function (key, item) { 
+                        var value;
+                        if (methodF == 1) value = item.name;
+                        else if (methodF == 2) value = item.title;
+                        else if (methodF == 3) value = item.contentPost;
+                        if (value.toLowerCase().includes(keyF.toLowerCase())){
+                            
+                            html += '<tr>';
+                            html += '<td class="fs-6">' + item.id + '</td>';
+                            html += '<td class="fs-6">' + item.name + '</td>';
+                            html += '<td class="fs-6">' + item.quantity + '</td>';
+                            html += '<td class="fs-6">' + item.createOn + '</td>';
+                            html += '<td class="fs-6">' + item.reportTime + '</td>';
+                            html += '<td class="fs-6">' + item.title + '</td>';
+                            html += '<td class="fs-6">' + item.rate + '</td>';
+                            html += '<td class="fs-6">' + item.contentPost + '</td>';
+                            html += '<td class="text-end fs-6">' + item.price + '</td>';
+                            html += '<td class="text-end fs-6">' + item.approveBy + '</td>';
+                            html += '<td class="text-end fs-6">' + item.approveDate + '</td>';
+                            html += '<td class="text-end fs-6">' + item.categoryId + '</td>';
+                            html += '<td class="text-end"><img src="' + (item.imgKey ? item.imgKey : "../imgs/loading.png") + '" style="width:auto; height:100px"/></td>';
+                            html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
+                            html += '</tr>';
+                        }
+                    });
+                    $('.tblTopUpList').html(html);
+                }
+            }
             function edit(id) {
-                console.log(id + "hi");
-                $("#topUpModalLabel").html("Update");
+                $("#topUpModalContentUpdate").html("");
+                $("#topUpModalLabelUpdate").html("Update");
+
+                var formData = new FormData();
+                formData.append("Id", id);
                 $.ajax({
-                    url: '@Url.Action("GetProductById", "Product")'+`?id=${id}`,
+                url: '@Url.Action("Edit", "Product")',
                     type: "GET",
+                    data: { id: id },
                     success: function (result) {
-                        console.log(result);
-                        selectedProduct = result;
-                        document.getElementById("pid").value = result.id;
-                        document.getElementById("pname").value = result.name;
-                        document.getElementById("quantity").value = result.quantity;
-                        document.getElementById("title").value = result.title;
-                        document.getElementById("content").value = result.contentPost;
-                        document.getElementById("price").value = result.price;
-                        document.getElementById("cateid").value = result.categoryId;
-                        document.getElementById("sid").value = result.studentId;
-                        $('#topUpModal').modal('show');
+                        $("#exchangeModalContentUpdate").html(result);
+                        $('#exchangeModalUpdate').modal('show');
                     },
                     error: function (message) {
                         alert(message);
                     }
                 });
+                loadData();
             }
 
             function delele(id) {
@@ -207,7 +268,7 @@
                         "status": 1,
                         "studentId": 2,
                         "createOn": "2024-06-03T07:13:04.157Z",
-                        "reportTime": "2024-06-03T07:13:04.157Z",
+                        "reportTime": null,
                         "rate": 0,
                         "title": document.getElementById("title").value,
                         "contentPost": document.getElementById("content").value,
@@ -216,11 +277,19 @@
                         "approveDate": "2024-06-03T07:13:04.157Z",
                         "categoryId": 2
                     }
+                var formData = new FormData();
+                formData.append("product", JSON.stringify(product)); // Add product data
 
+                // Access the image file element
+                var imgFile = document.getElementById("imgP").files[0];
+
+                if (imgFile) {
+                    formData.append("img", imgFile); // Add image file
+                }
                     $.ajax({
                         url: '@Url.Action("CreateProduct", "Product")',
                         type: "POST",
-                        data: product,
+                        data: formData,
                         success: function (result) {
                             loadData();
                             document.getElementById("btnCloseModal").click();

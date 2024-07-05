@@ -90,7 +90,7 @@ namespace ExchangeBusiness
         {
             try
             {
-                _unitOfWork.ProductRepository.UpdateAsync(product);
+                await _unitOfWork.ProductRepository.UpdateAsync(product);
                 return new ExchangeResult(Const.SUCCESS_GET, "Updated success!");
 
             }
@@ -104,7 +104,7 @@ namespace ExchangeBusiness
         {
             try
             {
-                Product product = _unitOfWork.ProductRepository.GetById(id);
+                Product product =  _unitOfWork.ProductRepository.GetById(id);
                 if (_unitOfWork.ProductRepository.Remove(product))
                 {
                     return new ExchangeResult(Const.SUCCESS_GET, "Removed success!");
