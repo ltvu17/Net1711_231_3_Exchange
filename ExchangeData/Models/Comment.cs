@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExchangeData.Models;
@@ -40,10 +41,12 @@ public partial class Comment
     public string? ImageId { get; set; }
 
     [ForeignKey("ProductId")]
+    [JsonIgnore]
     [InverseProperty("Comments")]
-    public virtual Product Product { get; set; } = null!;
+    public virtual Product? Product { get; set; } = null!;
 
     [ForeignKey("StudentId")]
+    [JsonIgnore]
     [InverseProperty("Comments")]
-    public virtual Student Student { get; set; } = null!;
+    public virtual Student? Student { get; set; } = null!;
 }

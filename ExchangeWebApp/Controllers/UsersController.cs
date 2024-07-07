@@ -25,7 +25,7 @@ namespace ExchangeWebApp.Controllers
         {
             try
             {
-                var result = new List<UserDTO>();
+                var result = new ExchangeResult();
                 using (var httpClient = new HttpClient())
                 {
                     using (var response = await httpClient.GetAsync(apiUrl + "GetAll"))
@@ -33,12 +33,12 @@ namespace ExchangeWebApp.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var content = await response.Content.ReadAsStringAsync();
-                            result = JsonConvert.DeserializeObject<List<UserDTO>>(content);
+                            result = JsonConvert.DeserializeObject<ExchangeResult>(content);
                         }
                     }
                 }
 
-                return result;
+                return JsonConvert.DeserializeObject<List<UserDTO>>(result.Data.ToString());
             }
             catch (Exception ex)
             {
@@ -146,7 +146,7 @@ namespace ExchangeWebApp.Controllers
         {
             try
             {
-                UserDTO result = new UserDTO();
+                var result = new ExchangeResult();
                 using (var httpClient = new HttpClient())
                 {
                     using (var response = await httpClient.GetAsync(apiUrl + "GetUser?id=" +id))
@@ -154,11 +154,11 @@ namespace ExchangeWebApp.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var content = await response.Content.ReadAsStringAsync();
-                            result = JsonConvert.DeserializeObject<UserDTO>(content);
+                            result = JsonConvert.DeserializeObject<ExchangeResult>(content);
                         }
                     }
                 }
-                return PartialView("Create", result);
+                return PartialView("Create", JsonConvert.DeserializeObject<UserDTO>(result.Data.ToString()));
             }
             catch (Exception ex)
             {

@@ -25,11 +25,11 @@ namespace ExchangeWebAPI.Controllers
 
             if (result.Status >0 )
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
             else
             {
-                return NotFound(result.Message);
+                return NotFound(result);
             }
         }
 
@@ -42,11 +42,11 @@ namespace ExchangeWebAPI.Controllers
 
             if (result.Status > 0)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
             else
             {
-                return NotFound(result.Message);
+                return NotFound(result);
             }
         }
 
@@ -62,7 +62,7 @@ namespace ExchangeWebAPI.Controllers
             }
             else
             {
-                return NotFound(result.Message);
+                return NotFound(result);
             }
         }
 
@@ -74,11 +74,11 @@ namespace ExchangeWebAPI.Controllers
 
             if (result.Status > 0)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
             else
             {
-                return NotFound(result.Message);
+                return NotFound(result);
             }
         }
 
@@ -91,11 +91,11 @@ namespace ExchangeWebAPI.Controllers
 
             if (result.Status > 0)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
             else
             {
-                return NotFound(result.Message);
+                return NotFound(result);
             }
         }
 

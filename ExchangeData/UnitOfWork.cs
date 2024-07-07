@@ -1,4 +1,5 @@
-﻿using ExchangeData.Repository;
+﻿using ExchangeData.Models;
+using ExchangeData.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,10 @@ namespace ExchangeData
         private UserRepository _userRepository;
         private ProductRepository _product;
         private ReportRepository _reportRepository;
+        private SellRepository _sell;
+        private TransactionRepository _transaction;
+        private CategoriesRepository _categoriesRepository;
+        private CommentsRepository _commentssRepository;
         public UnitOfWork()
         {
             _context = new Net17112313ExchangeContext();
@@ -29,6 +34,35 @@ namespace ExchangeData
             get
             {
                 return _reportRepository ??= new ReportRepository(_context);
+            }
+        }
+        public SellRepository SellRepository
+        {
+            get
+            {
+                return _sell ??= new Repository.SellRepository(_context);
+            }
+        }
+
+        public TransactionRepository TransactionRepository
+        {
+            get
+            {
+                return _transaction ??= new Repository.TransactionRepository(_context);
+            }
+        }
+        public CategoriesRepository CategoriesRepository
+        {
+            get
+            {
+                return _categoriesRepository ??= new CategoriesRepository(_context);
+            }
+        }
+        public CommentsRepository CommentssRepository
+        {
+            get
+            {
+                return _commentssRepository ??= new CommentsRepository(_context);
             }
         }
     }

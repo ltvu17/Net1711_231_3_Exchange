@@ -1,0 +1,100 @@
+﻿@model TransactionDTO
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Transaction</h4>
+<hr />
+
+<div class="form-group row">
+    <div class="col-md-6">
+        <label for="ProductId">Product</label>
+        <select id="ProductId" class="form-control" onchange="fetchProductPrice()"></select>
+    </div>
+    <div class="col-md-6">
+        <label for="Quantity">Quantity</label>
+        @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="col-md-6">
+        <label for="Note">Note</label>
+        @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="col-md-6">
+        <label for="Price">Price</label>
+        @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control", @id = "Price", @readonly = "readonly" } })
+        
+    </div>
+    <div class="col-md-6">
+        <label for="payment">Type Transaction</label>
+        @Html.DropDownListFor(model => model.TypeTransactions, new SelectList(new List<string> { "Sell", "Exchange" }), new { @class = "form-control" })
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        getAllProducts(@Model.ProductId);
+    });
+
+    function getAllProducts(selectedProductId) {
+        $.ajax({
+            url: '@Url.Action("GetAll", "Products")',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                // Clear previous options
+                $('#ProductId').empty();
+                // Add each product as an option to the dropdown list
+                $.each(result, function (key, item) {
+                    $('#ProductId').append($('<option>', {
+                        value: item.id,
+                        text: item.name,
+                        selected: item.id === selectedProductId
+                    }));
+                });
+
+                // Trigger the price fetching for the initially selected product
+                fetchProductPrice();
+            },
+            error: function (xhr, error) {
+                console.error('Error fetching products:', xhr, error);
+                alert('Something went wrong!');
+            }
+        });
+    }
+
+    function fetchProductPrice() {
+        var productId = $('#ProductId').val();
+        console.log('Fetching price for product ID:', productId); // Debug log
+        $.ajax({
+            url: '@Url.Action("GetPrice", "Products")',
+            type: "GET",
+            data: { productId: productId },
+            dataType: "json",
+            success: function (result) {
+                console.log('Price fetch result:', result); // Debug log
+                if (result.success) {
+                    $('#Price').val(result.price);
+                } else {
+                    alert(result.message);
+                }
+            },
+            error: function (xhr, error) {
+                console.error('Error fetching price:', xhr, error);
+                alert('Something went wrong!');
+            }
+        });
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

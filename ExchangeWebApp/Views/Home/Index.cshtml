@@ -1,14 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model ProductDTO
 
-<div class="container-md" style="">
-    <div class="row" style="max-height: 600px" >
-        <div class="col-lg-8" style="overflow:auto; max-height: 600px">
-            @for (var i = 0; i < 5; i++)
+<div class="container-sm" style="display: flex; align-items: center; justify-content:center">
+    <div class="row" style="max-height: 100%; justify-content:center">
+        <div id="content" class="col-md-12 content" style="overflow:auto; max-height: 100%; width: 70%">
+            @* @for (var i = 0; i < 5; i++)
             {
                 <div class="align-content-center align-items-center text-center" style="margin: 5%;">
-                    @*   <div class="col" style="margin: 5%"> *@
                     <div style="border-bottom: solid 1px; width: 100%">
                         <div style="display: flex;">
                             <img src="../imgs/2.png" alt="avatar" style="width: 50px; height: 50px; border-radius: 25px; display:table-column; margin-bottom: 10px"></img>
@@ -17,7 +17,7 @@
                                 <p style="margin-left: 10px; font-weight:100 ; font-size: small">21/06/2024</p>
                             </div>
                         </div>
-                        <a href="#" style="">
+                        <a href="#" style="" onclick="Detail()">
                         <div>
                             <img src="../imgs/product.jpg" alt="haha" style="width: 100%; max-height: 200% ;display:table-column; border-radius: 10px; padding-bottom: 5px"></img>
                         </div>
@@ -28,20 +28,65 @@
                         </div>
   
                     </div>
-                    @* </div> *@
                 </div>
-            }
-        </div>
-        <div class="col-lg-4" >
-            <div>
-                <p>This is description</p>
- 
-            </div>
+            } *@
         </div>
     </div>
-    <div style="float: right">
+@*     <div style="float: right">
         <button class="btn btn-danger">Report</button>
         <button class="btn btn-success" style="">Exchange</button>
         <button class="btn btn-success" style="">Order</button>
-    </div>
+    </div> *@
 </div>
+@section scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        loadData();
+    });
+    function loadData() {
+                $.ajax({
+                    url: '@Url.Action("GetAll", "Product")',
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        var html = '';
+                        $.each(result, function (key, item) {
+                           
+                         html += `<div class="align-content-center align-items-center text-center" style="margin: 5%;">
+                        <div style="border-bottom: solid 1px; width: 100%">
+                            <div style="display: flex;">
+                                <img src="../imgs/2.png" alt="avatar" style="width: 50px; height: 50px; border-radius: 25px; display:table-column; margin-bottom: 10px"></img>
+                                <div style="margin-left: 1%">
+                                    <h6>UserName</h6>
+                                    <p style="margin-left: 10px; font-weight:100 ; font-size: small">${item.createOn.split("T")[0]}</p>
+                                </div>
+                            </div>
+                            <a href="#" style="" onclick="Detail(${item.id})">
+                            <div>
+                                <img src="${item.imgKey ? item.imgKey : "../imgs/loading.png"}" alt="Product img" style="width: 100%; max-height: 200% ;display:table-column; border-radius: 10px; padding-bottom: 5px"></img>
+                            </div>
+                            </a>
+                            <div style="text-align : start">
+                                <p style="font-weight: 500">${item.name}</p>
+                                <div>
+                                <p style="font-weight: 200">${item.contentPost ?? ""}</p>
+                                </div>
+                                <p style="font-weight: 500">${item.price} VND</p>
+                            </div>
+                            </div>
+                        </div>`
+                        });
+                    console.log(result);
+                        $('.content').html(html);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+        function Detail(id){
+            console.log(id);
+        }
+</script>
+}
