@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExchangeData.Models;
@@ -32,7 +31,7 @@ public partial class Product
     public DateTime CreateOn { get; set; }
 
     [Column("report_time", TypeName = "datetime")]
-    public DateTime? ReportTime { get; set; }
+    public DateTime ReportTime { get; set; }
 
     [Column("rate")]
     public double? Rate { get; set; }
@@ -55,41 +54,33 @@ public partial class Product
     [Column("approve_date", TypeName = "datetime")]
     public DateTime? ApproveDate { get; set; }
 
-    [Column("img_key")]
-    [StringLength(255)]
-    public string? ImgKey { get; set; }
-
     [Column("category_id")]
     public int CategoryId { get; set; }
 
+    [Column("img_key")]
+    public string? ImgKey { get; set; }
+
     [ForeignKey("ApproveBy")]
     [InverseProperty("Products")]
-    [JsonIgnore]
     public virtual User? ApproveByNavigation { get; set; }
 
     [ForeignKey("CategoryId")]
     [InverseProperty("Products")]
-    [JsonIgnore]
-    public virtual Category? Category { get; set; } = null!;
+    public virtual Category Category { get; set; } = null!;
 
     [InverseProperty("Product")]
-    [JsonIgnore]
-    public virtual ICollection<Comment>? Comments { get; set; } = new List<Comment>();
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     [InverseProperty("ExchangeNavigation")]
-    [JsonIgnore]
-    public virtual ICollection<Exchange>? Exchanges { get; set; } = new List<Exchange>();
+    public virtual ICollection<Exchange> Exchanges { get; set; } = new List<Exchange>();
 
     [InverseProperty("Product")]
-    [JsonIgnore]
-    public virtual ICollection<Report>? Reports { get; set; } = new List<Report>();
+    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
     [ForeignKey("StudentId")]
     [InverseProperty("Products")]
-    [JsonIgnore]
-    public virtual Student? Student { get; set; } = null!;
+    public virtual Student Student { get; set; } = null!;
 
     [InverseProperty("Product")]
-    [JsonIgnore]
-    public virtual ICollection<Transaction>? Transactions { get; set; } = new List<Transaction>();
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

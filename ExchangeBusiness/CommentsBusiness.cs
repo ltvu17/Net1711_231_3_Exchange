@@ -1,7 +1,5 @@
-﻿using ExchangeData;
-using ExchangeData.Base;
-using ExchangeData.DAO;
-using ExchangeData.Models;
+﻿using ExchangeData.Models;
+using ExchangeData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace ExchangeBusiness
 {
-    public class ExchangeBusiness
+    public class CommentsBusiness
     {
         private readonly UnitOfWork _unitOfWork;
-        public ExchangeBusiness()
+        public CommentsBusiness()
         {
             _unitOfWork ??= new UnitOfWork();
         }
@@ -21,7 +19,7 @@ namespace ExchangeBusiness
         {
             try
             {
-                var exchanges = await _unitOfWork.ExchangeRepository.GetAllAsync();
+                var exchanges = await _unitOfWork.CommentssRepository.GetAllAsync();
                 if (exchanges == null)
                 {
                     return new ExchangeResult(-1, "No Data");
@@ -40,7 +38,7 @@ namespace ExchangeBusiness
         {
             try
             {
-                var exchanges = await _unitOfWork.ExchangeRepository.GetByIdAsync(id);
+                var exchanges = await _unitOfWork.CommentssRepository.GetByIdAsync(id);
                 if (exchanges == null)
                 {
                     return new ExchangeResult(-1, "No Data");
@@ -55,11 +53,11 @@ namespace ExchangeBusiness
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<IExchangeResult> Create(Exchange entity)
+        public async Task<IExchangeResult> Create(Comment entity)
         {
             try
             {
-                var exchanges = await _unitOfWork.ExchangeRepository.CreateAsync(entity);
+                var exchanges = await _unitOfWork.CommentssRepository.CreateAsync(entity);
                 if (exchanges == 0)
                 {
                     return new ExchangeResult(-1, "No Data");
@@ -74,19 +72,24 @@ namespace ExchangeBusiness
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<IExchangeResult> Update(int id, Exchange newEntity)
+        public async Task<IExchangeResult> Update(int id, Comment newEntity)
         {
             try
             {
-                var exchanges = await _unitOfWork.ExchangeRepository.GetByIdAsync(id);
-                if (exchanges == null)
+                var comment = await _unitOfWork.CommentssRepository.GetByIdAsync(id);
+                if (comment == null)
                 {
                     return new ExchangeResult(-1, "No Data");
                 }
-                exchanges.ExchangeNavigation = newEntity.ExchangeNavigation;
-                exchanges.Status = newEntity.Status;
-                exchanges.Transaction = newEntity.Transaction;
-                _unitOfWork.ExchangeRepository.UpdateAsync(exchanges);
+                comment.ImageId = newEntity.ImageId;
+                comment.Status = newEntity.Status;
+                comment.StudentId = newEntity.StudentId;
+                comment.ProductId = newEntity.ProductId;
+                comment.Content = newEntity.Content;
+                comment.CreateOn = newEntity.CreateOn;
+                comment.ModifyAt = newEntity.ModifyAt;
+                comment.ReplyId = newEntity.ReplyId;
+                await _unitOfWork.CommentssRepository.UpdateAsync(comment);
                 return new ExchangeResult(1, "Update Saved");
             }
             catch
@@ -98,13 +101,13 @@ namespace ExchangeBusiness
         {
             try
             {
-                var exchanges = await _unitOfWork.ExchangeRepository.GetByIdAsync(id);
+                var exchanges = await _unitOfWork.CommentssRepository.GetByIdAsync(id);
                 if (exchanges == null)
                 {
                     return new ExchangeResult(-1, "No Data");
                 }
 
-                await _unitOfWork.ExchangeRepository.RemoveAsync(exchanges);
+                await _unitOfWork.CommentssRepository.RemoveAsync(exchanges);
                 return new ExchangeResult(1, "Remove Saved");
             }
             catch

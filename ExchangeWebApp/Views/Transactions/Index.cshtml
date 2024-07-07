@@ -1,0 +1,272 @@
+﻿@model IEnumerable<TransactionDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">TopUp List</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <input type="text" id="orderCode" placeholder="Enter Transaction Code">
+        <button onclick="searchOrder()">Search</button>
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Id</th>
+                    <th class="card-title text-center">Status</th>
+                    <th class="card-title text-center">ProductId</th>
+                    <th class="card-title text-center">Quantity</th>
+                    <th class="card-title text-center">Note</th>
+                    <th class="card-title text-center">Price</th>
+                    <th class="card-title text-center">Create At</th>
+                    <th class="card-title text-center">Student Buy</th>
+                    <th class="card-title text-center">Total Price</th>
+                    <th class="card-title text-center">Type Transaction</th>
+                </tr>
+            </thead>
+            <tbody class="tblTopUpList">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="topUpModalLabel">TopUp Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="topUpModalContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+        });
+
+        function loadData() {
+            $.ajax({
+                url: '@Url.Action("GetAll", "Transactions")',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.id + '</td>';
+                        if (item.status === 0) {
+                            html += '<td>Pending</td>';
+                        } else if (item.status === 1) {
+                            html += '<td>Completed</td>';
+                        } else {
+                            html += '<td>Cancelled</td>';
+                        }
+                        html += '<td>' + item.productId + '</td>';
+                        html += '<td>' + item.quantity + '</td>';
+                        html += '<td>' + item.note + '</td>';
+                        html += '<td>' + item.price + '</td>';
+                        html += '<td>' + item.createAt + '</td>';
+                        html += '<td>' + item.studentBuy + '</td>';
+                        html += '<td>' + item.totalPrice + '</td>';
+                        html += '<td>' + item.typeTransactions + '</td>';
+                        html += '<td><a href="#" onclick="return edit(' + item.id + ')">Edit</a> | <a href="#" onclick="deleteTransaction(' + item.id + ')">Delete</a></td>';
+                        html += '</tr>';
+                    });
+                    $('.tblTopUpList').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function add() {
+            $("#topUpModalContent").html("");
+            $("#topUpModalLabel").html("Add New");
+
+            $.ajax({
+                url: '@Url.Action("Add", "Transactions")',
+                type: "GET",
+                success: function (result) {
+                    $("#topUpModalContent").html(result);
+                    $('#topUpModal').modal('show');
+                    $("#btSave").off("click").on("click", function () {
+                        create();
+                    });
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+        }
+
+        function edit(id) {
+            $("#topUpModalContent").html("");
+            $("#topUpModalLabel").html("Update");
+
+            $.ajax({
+                url: '@Url.Action("Edit", "Transactions")',
+                type: "GET",
+                data: { id: id },
+                success: function (result) {
+                    $("#topUpModalContent").html(result);
+                    $('#topUpModal').modal('show');
+                    $("#btSave").off("click").on("click", function () {
+                        update(id);
+                    });
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+        }
+
+        function create() {
+            var data = {
+                productId: $("#ProductId").val(),
+                quantity: $("#Quantity").val(),
+                note: $("#Note").val(),
+                price: $("#Price").val(),
+                typeTransactions: $("#TypeTransactions").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Create", "Transactions")',
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#topUpModal').modal('hide');
+                        loadData();
+                    }
+                    alert("Created new Transaction successfully!");
+                },
+                error: function (xhr, error) {
+                    console.log(xhr);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+
+        function update(id) {
+            var data = {
+                id: id,
+                productId: $("#ProductId").val(),
+                quantity: $("#Quantity").val(),
+                note: $("#Note").val(),
+                price: $("#Price").val(),
+                studentBuy: $("#StudentBuy").val(),
+                totalPrice: $("#TotalPrice").val(),
+                typeTransactions: $("#TypeTransactions").val()
+            };
+
+            $.ajax({
+                type: 'PUT',
+                url: '@Url.Action("Update", "Transactions")',
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#topUpModal').modal('hide');
+                        loadData();
+                    }
+                    alert("Updated Transaction successfully!");
+                },
+                error: function (xhr, error) {
+                    console.log(xhr);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+
+        function deleteTransaction(id) {
+            var result = confirm("Are you sure you want to delete?");
+            if (result) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Transactions")',
+                    type: "POST",
+                    data: { id: id },
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            $('#topUpModal').modal('hide');
+                            loadData();
+                        }
+                        alert(result.message);
+                    },
+                    error: function (message) {
+                        alert(message);
+                    }
+                });
+            }
+        }
+
+        function searchOrder() {
+
+            const orderCode = document.getElementById('orderCode').value;
+            $.ajax({
+                url: '@Url.Action("Search", "Transactions")',
+                type: "POST",
+                data: { orderCode: orderCode },
+                success: function (result) {
+                    var html = '';
+                    $.each(result, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.id + '</td>';
+                        if (item.status === 0) {
+                            html += '<td>Pending</td>';
+                        } else if (item.status === 1) {
+                            html += '<td>Completed</td>';
+                        } else {
+                            html += '<td>Cancelled</td>';
+                        }
+                        html += '<td>' + item.productId + '</td>';
+                        html += '<td>' + item.quantity + '</td>';
+                        html += '<td>' + item.note + '</td>';
+                        html += '<td>' + item.price + '</td>';
+                        html += '<td>' + item.createAt + '</td>';
+                        html += '<td>' + item.studentBuy + '</td>';
+                        html += '<td>' + item.totalPrice + '</td>';
+                        html += '<td>' + item.typeTransactions + '</td>';
+                        html += '<td><a href="#" onclick="return edit(' + item.id + ')">Edit</a> | <a href="#" onclick="deleteTransaction(' + item.id + ')">Delete</a></td>';
+                        html += '</tr>';
+                    });
+                    $('.tblTopUpList').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+    </script>
+}

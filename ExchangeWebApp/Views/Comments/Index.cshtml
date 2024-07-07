@@ -1,0 +1,162 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">TopUp List</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="add()">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">ID</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblTopUpList">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("CreateComment", "Comments", FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exchangeModalLabel">TopUp Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="exchangeModalContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exchangeModalEdit" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("Update", "Comments", FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exchangeModalLabelEdit">TopUp Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="exchangeModalContentEdit"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+            //GetAllData
+            function loadData() {
+                $.ajax({
+                    url: '@Url.Action("GetAll", "Comments")',
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        var html = '';
+                        $.each(result, function (key, item) {
+                            console.log(item);
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                            html += '</tr>';
+                        });
+                        $('.tblTopUpList').html(html);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+        });
+
+        function add() {
+            $("#exchangeModalContent").html("");
+            $("#exchangeModalLabel").html("Add New");
+
+            $.ajax({
+                url: '@Url.Action("Create", "Comments")',
+                type: "GET",
+                success: function (result) {
+                    $("#exchangeModalContent").html(result);
+                    $('#exchangeModal').modal('show');
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+        };
+        function edit(itemId) {
+            $("#exchangeModalContentEdit").html("");
+            $("#exchangeModalLabelEdit").html("Edit");
+
+            $.ajax({
+                url: '@Url.Action("Edit", "Comments")' + `?id=${itemId}`,
+                type: "GET",
+                success: function (result) {
+                    $("#exchangeModalContentEdit").html(result);
+                    $('#exchangeModalEdit').modal('show');
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+        };
+
+        function deleteItem(itemId) {
+            if (confirm("You want to delete this record ?") == true) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Comments")' + `?id=${itemId}`,
+                    type: "POST",
+                    success: function (result) {
+
+
+                        location.reload();
+                    },
+                    error: function (message) {
+                        alert(message);
+                    }
+                });
+            } else {
+
+            }
+        };
+
+
+    </script>
+}

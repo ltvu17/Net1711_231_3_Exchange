@@ -1,0 +1,53 @@
+﻿ @model CategoryDTO
+
+<div class="col-md-6">
+    <label for="1">Name</label>
+    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">Note</label>
+    @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">Description</label>
+    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">ModifiedDate</label>
+    @Html.EditorFor(model => model.ModifiedDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+    @Html.ValidationMessageFor(model => model.ModifiedDate, "", new { @class = "text-danger" })
+</div>
+@* <div class="col-md-6">
+    <label for="IsActive">Is Active</label>
+    @Html.DropDownListFor(model => model.IsActive, new SelectList(new[]
+            {
+    new { Value = true, Text = "Active" },
+    new { Value = false, Text = "Inactive" }
+    }, "Value", "Text"), new { @class = "form-control", id = "IsActive" })
+</div> *@
+
+<div class="col-md-6">
+    <label for="1">DisplayOrder</label>
+    @Html.EditorFor(model => model.DisplayOrder, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => model.DisplayOrder, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">MetaKeywords</label>
+    @Html.EditorFor(model => model.MetaKeywords, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => model.MetaKeywords, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">MetaDescription</label>
+    @Html.EditorFor(model => model.MetaDescription, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => model.MetaDescription, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">ThumbnailImage</label>
+    @Html.EditorFor(model => model.ThumbnailImage, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => model.ThumbnailImage, "", new { @class = "text-danger" })
+</div>
+
+

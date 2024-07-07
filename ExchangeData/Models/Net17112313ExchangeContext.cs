@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ExchangeData.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExchangeData;
+namespace ExchangeData.Models;
 
 public partial class Net17112313ExchangeContext : DbContext
 {

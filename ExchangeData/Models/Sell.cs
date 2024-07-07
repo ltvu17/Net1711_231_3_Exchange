@@ -38,6 +38,10 @@ public partial class Sell
     [Column("note")]
     public string? Note { get; set; }
 
+    [Column("paymentMethod")]
+    [StringLength(250)]
+    public string? PaymentMethod { get; set; }
+
     [ForeignKey("TransactionId")]
     [InverseProperty("Sells")]
     public virtual Transaction Transaction { get; set; } = null!;
