@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExchangeData.Models;
@@ -62,25 +63,32 @@ public partial class Product
 
     [ForeignKey("ApproveBy")]
     [InverseProperty("Products")]
+    [JsonIgnore]
     public virtual User? ApproveByNavigation { get; set; }
 
     [ForeignKey("CategoryId")]
     [InverseProperty("Products")]
+    [JsonIgnore]
     public virtual Category Category { get; set; } = null!;
 
     [InverseProperty("Product")]
+    [JsonIgnore]
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     [InverseProperty("ExchangeNavigation")]
+    [JsonIgnore]
     public virtual ICollection<Exchange> Exchanges { get; set; } = new List<Exchange>();
 
     [InverseProperty("Product")]
+    [JsonIgnore]
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
     [ForeignKey("StudentId")]
+    [JsonIgnore]
     [InverseProperty("Products")]
     public virtual Student Student { get; set; } = null!;
 
     [InverseProperty("Product")]
+    [JsonIgnore]
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }
