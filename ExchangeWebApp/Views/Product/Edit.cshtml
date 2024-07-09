@@ -50,9 +50,17 @@
                         </div>
                         <div class="row">
                             <div class="col-md-8 text-start">
-                                <label for="imgP" class="col-form-label">Image Path:</label>
-                                <input type="file" class="form-control" id="img" name="img" />
+                                <label for="imgE" class="col-form-label">Image Path:</label>
+                                <input type="file" class="form-control" id="imgE" name="img" />
                             </div>
                         </div>
                     </div>
-            
+<script>
+    const editField = document.getElementById("imgE");
+    editField.onchange = function () {
+        if (this.files[0].size > 5242880) { // 5 MB in bytes
+            alert("File is too big! Please select a smaller file.");
+            this.value = ""; // Clear the input field
+        }
+    };
+</script>
