@@ -1,0 +1,146 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ProductDTO
+@{
+}
+@{
+    var img = "../imgs/loading.png";
+    if (Model.ImgKey != null)
+    {
+        img = Model.ImgKey;
+    }
+     
+}
+<div class="container-sm" style="display: flex; align-items: center; justify-content:center">
+<div class="row" style="max-height: 100%; justify-content:center">
+        <div id="content" class="col-lg-8 content" style="max-height: 100%;max-width: 100%">
+    <div class="align-content-center align-items-center text-center" style="margin: 2%;">
+        <div style=" width: 100%">
+        <a href="#" style="" onclick="Detail()">
+            <div>
+                <img src="@img" alt="haha" style="width: 100%; min-height: 60vh ;display:table-column; border-radius: 10px; padding-bottom: 5px"></img>
+            </div>
+        </a>
+        <div style="text-align : center">
+            <button class="btn btn-danger" onclick="Report(@Model.Id, @Model.Price)">Report</button>
+            <button class="btn btn-success" style=""  onclick="Exchange(@Model.Id, @Model.Price)">Exchange </button>
+            <button class="btn btn-success" style="" onclick="Order(@Model.Id, @Model.Price)">Order</button>
+        </div>
+        </div>
+    </div>
+       
+    </div>
+    <div id="content" class="col-lg-4 content" style="max-width: 100%; max-height: 100% ; overflow-x: auto">
+            <div style="display: flex; margin-top: 5%; border-bottom: solid 1px">
+                <div>
+                    <img src="../imgs/2.png" alt="avatar" style="width: 40px; height: 40px; border-radius: 20px; display:table-column; margin: 40% 0 "></img>
+                </div>
+                <div style="margin-left: 2%; margin-bottom: 10px">
+                    <h6 style="margin: 40% 0; font-size:15px">UserName</h6>
+                </div>
+            </div>
+            <div style="border-bottom: solid 1px; max-height: 56vh; overflow-x: auto">
+            <div style="text-align : start; margin-left: 50px; border-bottom: solid 1px">
+                <p style="font-weight: 500">- @Model.Name</p>
+                <p style="font-weight: 500">- @Model.Title</p>
+                    <p style="font-weight: 300">
+                        - @Model.ContentPost 14 pro max 256g black kh/a xài được một sim vật lý và một e sim pin 95% zin áp suất máy có trầy nhẹ nhìn kỷ mới thấy
+                        Hỗ trợ :
+                        𝟏.𝐓𝐫𝐚̉ 𝐠𝐨́𝐩 𝟎% 𝐥𝐚̃𝐢 𝐬𝐮𝐚̂́𝐭 bằng thẻ tín dụng lãi suất 0% có phí chuyển đổi
+                        2. Hỗ trợ trả góp bằng CMND và bằng lái hoặc căn cước công dân có chíp - Hồ sơ đơn giản - Chỉ cần CCCD - Duyệt nhanh 20 phút nhận máy ngay.
+                    </p>
+                <p style="font-weight: 300; color: red">- Price: @Model.Price VND</p>
+            </div>
+        <div style="">
+                @for(var i = 0 ; i< 10; i++)
+                {
+                    <div style="display: flex; margin-top: 5%;">
+                        <div>
+                            <img src="../imgs/2.png" alt="avatar" style="width: 40px; height: 40px; border-radius: 20px; display:table-column; "></img>
+                        </div>
+                        <div style="margin-left: 2%;">
+                            <P style="font-size:15px; font-weight: 500">UserName</P>
+                        </div>
+                        <div style="margin-left: 2%;">
+                            <P style="font-size:15px">San pham nay con hang khong a </P>
+                        </div>
+                    </div>
+                    <div>
+                        <p style="margin-left: 40px; font-size: 10px; font-weight:100">1 week</p>
+                    </div>
+                }            
+        </div>
+            </div>
+        <div style="margin-top: 10px">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Write your comment" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">Post</button>
+                    </div>
+                </div>
+        </div>
+        </div>
+</div>
+</div>
+
+    <script type="text/javascript">
+        function Report(id) {
+            console.log(id)
+        }
+        function Exchange(id) {
+            console.log(id)
+        }
+        function Order(id, price) {
+            console.log(id)
+            var data = {
+            "productId": id,
+            "quantity": 1,
+            "note": "",
+            "price": price,
+            "studentBuy": 3,
+            "typeTransactions": "Sell"
+            }
+            if (confirm("You want to ORDER this product") == true) {
+                $.ajax({
+                    url: '@Url.Action("Create", "Transactions")',
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(data),
+                    success: function (result) {
+                        console.log(result);
+                        createSell(result.data);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+            else {
+                alert("cancel");
+            }
+        }
+        function createSell(transaction) {
+        var sell = {
+            "payment": "Cash",
+            "transactionId": transaction.id,
+            "note": "Not pay",
+            "cashCustomerPay": transaction.totalPrice
+        }
+            $.ajax({
+                    url: '@Url.Action("Create", "Sells")',
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(sell),
+                    success: function (result) {
+                        console.log(result);
+                        alert("Order Success full")
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                });
+        }
+    </script>

@@ -99,6 +99,7 @@ namespace ExchangeBusiness
                 var m = 1;
                 var createSell = new Sell
                 {
+                    Payment = sell.Payment,
                     PaymentMethod = sell.Payment,
                     TransactionId = sell.TransactionId,
                     Status = 1,

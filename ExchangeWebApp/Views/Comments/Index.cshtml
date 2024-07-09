@@ -24,6 +24,10 @@
             <thead>
                 <tr class="card-header">
                     <th class="card-title text-center">ID</th>
+                    <th class="card-title text-center">Product comment Id</th>
+                    <th class="card-title text-center">Content</th>
+                    <th class="card-title text-center">Comment From</th>
+                    <th class="card-title text-center">Status</th>
                     <th class="card-title text-center"></th>
                 </tr>
             </thead>
@@ -93,6 +97,10 @@
                             console.log(item);
                             html += '<tr>';
                             html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.productId + '</td>';
+                            html += '<td>' + item.content + '</td>';
+                            html += '<td>' + item.studentId + '</td>';
+                            html += '<td>' + item.status + '</td>';
                             html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                             html += '</tr>';
                         });

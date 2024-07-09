@@ -63,7 +63,7 @@ namespace ExchangeWebApi.Controllers
                 Note = transaction.Note,
                 Price = transaction.Price,
                 CreateAt = DateTime.Now,
-                StudentBuy =1,
+                StudentBuy = transaction.StudentBuy,
                 TotalPrice = transaction.Price * transaction.Quantity,
                 TypeTransactions = transaction.TypeTransactions,
             };

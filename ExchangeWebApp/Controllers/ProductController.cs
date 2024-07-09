@@ -67,7 +67,31 @@ namespace ExchangeWebApp.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetProductDetailById(string id)
+        {
+            try
+            {
+                var result = new ProductDTO();
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(apiUrl + "GetProduct?id=" + id))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            result = JsonConvert.DeserializeObject<ProductDTO>(content);
+                        }
+                    }
+                }
 
+                return PartialView("ProductShowDetail", result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateProduct(ProductDTO product, IFormFile img)

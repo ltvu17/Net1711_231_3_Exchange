@@ -98,6 +98,8 @@ namespace ExchangeWebMVC.Controllers
                         {
                             var responseContent = await response.Content.ReadAsStringAsync();
                             var result = JsonConvert.DeserializeObject<ExchangeResult>(responseContent);
+                            var data = JsonConvert.DeserializeObject<TransactionDTO>(result.Data.ToString());
+                            result.Data = data;
                             return result;
 
                         }

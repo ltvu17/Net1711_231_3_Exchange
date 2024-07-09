@@ -38,6 +38,14 @@
         <button class="btn btn-success" style="">Order</button>
     </div> *@
 </div>
+<div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="min-width: 50%">
+        <div class="modal-content" id="exchangeModalContent">
+            Modal
+        </div>
+    </div>
+</div>
+
 @section scripts {
 <script type="text/javascript">
     $(document).ready(function () {
@@ -69,15 +77,11 @@
                             </a>
                             <div style="text-align : start">
                                 <p style="font-weight: 500">${item.name}</p>
-                                <div>
-                                <p style="font-weight: 200">${item.contentPost ?? ""}</p>
-                                </div>
                                 <p style="font-weight: 500">${item.price} VND</p>
                             </div>
                             </div>
                         </div>`
                         });
-                    console.log(result);
                         $('.content').html(html);
                     },
                     error: function (xhr, error) {
@@ -87,6 +91,20 @@
             }
         function Detail(id){
             console.log(id);
+            $("#exchangeModalContent").html("");
+            $("#exchangeModalLabel").html("Add New");
+
+            $.ajax({
+                url: '@Url.Action("GetProductDetailById", "Product")' + `?id=${id}`,
+                type: "GET",
+                success: function (result) {
+                    $("#exchangeModalContent").html(result);
+                    $('#exchangeModal').modal('show');
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
         }
 </script>
 }

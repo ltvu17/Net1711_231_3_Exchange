@@ -7,7 +7,7 @@ namespace ExchangeWebApp.Models
     {
         public int Id { get; set; }
 
-        public DateTime CreateOn { get; set; }
+        public DateTime CreateOn { get; set; } = DateTime.Now;
 
         public int StudentId { get; set; }
 
@@ -20,7 +20,7 @@ namespace ExchangeWebApp.Models
 
         public int? Status { get; set; }
 
-        public DateTime? ModifyAt { get; set; }
+        public DateTime? ModifyAt { get; set; }  
 
         [StringLength(255)]
         public string? ImageId { get; set; }
