@@ -16,7 +16,7 @@ namespace ExchangeWebApp.Models
 
         public DateTime CreateOn { get; set; } = new DateTime();
 
-        public DateTime? ReportTime { get; set; }
+        public DateTime? ReportTime { get; set; } = DateTime.Now.AddDays(1);
 
         public double? Rate { get; set; }
 
