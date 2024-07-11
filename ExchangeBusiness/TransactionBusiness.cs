@@ -169,7 +169,6 @@ namespace ExchangeBusiness
             {
                 return new ExchangeResult(Const.ERROR_EXCEPTION, ex.Message);
             }
-            return new ExchangeResult(Const.SUCCESS_GET, "Delete fail", null);
         }
     }
 }

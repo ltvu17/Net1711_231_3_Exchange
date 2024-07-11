@@ -1,17 +1,14 @@
-﻿@model IEnumerable<SellDTO>
-
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
 @{
-    ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
 <div class="row">
     <div class="col-md-10">
-        <h3 class="display-8">TopUp List</h3>
+        <h3 class="display-8">Request Sell</h3>
     </div>
     <div class="col-md-2 text-end">
-        <input type="text" id="orderCode" placeholder="Enter Sell Code">
+        <input type="text" id="orderCode" placeholder="Enter Transaction Code">
         <button onclick="searchOrder()">Search</button>
         <button type="button" class="btn btn-primary" onclick="add();">
             Add
@@ -25,16 +22,13 @@
             <thead>
                 <tr class="card-header">
                     <th class="card-title text-center">Id</th>
-                    <th class="card-title text-center">Payment method</th>
-                    <th class="card-title text-center">transactionId</th>
-                    <th class="card-title text-center">create on</th>
-                    <th class="card-title text-center">cash customer pay</th>
-                    <th class="card-title text-center">cash Back</th>
-                    <th class="card-title text-center">total price</th>
-                    <th class="card-title text-center">status</th>
+                    <th class="card-title text-center">ProductId</th>
+                    <th class="card-title text-center">Quantity</th>
                     <th class="card-title text-center">Note</th>
-                    <th class="card-title text-center">View</th>
-
+                    <th class="card-title text-center">Price</th>
+                    <th class="card-title text-center">Buyer</th>
+                    <th class="card-title text-center">Create At</th>
+                    <th class="card-title text-center">Total Price</th>
                 </tr>
             </thead>
             <tbody class="tblTopUpList">
@@ -42,8 +36,39 @@
         </table>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">Request Exchange</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <input type="text" id="orderCode" placeholder="Enter Transaction Code">
+        <button onclick="searchOrder()">Search</button>
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
 
-
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Id</th>
+                    <th class="card-title text-center">ProductId</th>
+                    <th class="card-title text-center">Quantity</th>
+                    <th class="card-title text-center">Note</th>
+                    <th class="card-title text-center">Price</th>
+                    <th class="card-title text-center">Buyer</th>
+                    <th class="card-title text-center">Create At</th>
+                    <th class="card-title text-center">Total Price</th>
+                </tr>
+            </thead>
+            <tbody class="tblTopUpListExchange">
+            </tbody>
+        </table>
+    </div>
+</div>
 <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -70,32 +95,45 @@
     <script type="text/javascript">
         $(document).ready(function () {
             loadData();
-
-
         });
 
         function loadData() {
             $.ajax({
-                url: '@Url.Action("GetAll", "Sells")',//(method,nameController)
+                url: '@Url.Action("GetTransactionByUser", "Transactions")',
                 type: "GET",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
                 success: function (result) {
                     var html = '';
-                    $.each(result, function (key, item) {
+                    var htmlExchange = '';
+                    $.each(result.filter(s => s.status == 0 && s.typeTransactions == "Sell"), function (key, item) { 
                         html += '<tr>';
                         html += '<td>' + item.id + '</td>';
-                        html += '<td>' + item.paymentMethod + '</td>';
-                        html += '<td>' + item.transactionId + '</td>';
-                        html += '<td>' + item.createOn + '</td>';
-                        html += '<td>' + item.cashCustomerPay + '</td>';
-                        html += '<td>' + item.cashBack + '</td>';
-                        html += '<td>' + item.totalPrice + '</td>';
-                        html += '<td>' + item.status + '</td>';
+                        html += '<td>' + item.productId + '</td>';
+                        html += '<td>' + item.quantity + '</td>';
                         html += '<td>' + item.note + '</td>';
-                        html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>'; html += '</tr>';
+                        html += '<td>' + item.price + '</td>';
+                        html += '<td>' + item.studentBuy + '</td>';
+                        html += '<td>' + item.createAt + '</td>';
+                        html += '<td>' + item.totalPrice + '</td>';
+                        html += '<td><a href="#" onclick="return edit(' + item.id + ')">Accept</a> | <a href="#" onclick="deleteTransaction(' + item.id + ')">Deny</a></td>';
+                        html += '</tr>';
+                    });
+                    $.each(result.filter(s => s.status == 0 && s.typeTransactions == "Exchange"), function (key, item) {
+                        htmlExchange += '<tr>';
+                        htmlExchange += '<td>' + item.id + '</td>';
+                        htmlExchange += '<td>' + item.productId + '</td>';
+                        htmlExchange += '<td>' + item.quantity + '</td>';
+                        htmlExchange += '<td>' + item.note + '</td>';
+                        htmlExchange += '<td>' + item.price + '</td>';
+                        htmlExchange += '<td>' + item.studentBuy + '</td>';
+                        htmlExchange += '<td>' + item.createAt + '</td>';
+                        htmlExchange += '<td>' + item.totalPrice + '</td>';
+                        htmlExchange += '<td><a href="#" onclick="return edit(' + item.id + ')">Accept</a> | <a href="#" onclick="deleteTransaction(' + item.id + ')">Deny</a></td>';
+                        htmlExchange += '</tr>';
                     });
                     $('.tblTopUpList').html(html);
+                    $('.tblTopUpListExchange').html(htmlExchange);
                 },
                 error: function (xhr, error) {
                     alert(xhr.statusText);
@@ -108,7 +146,7 @@
             $("#topUpModalLabel").html("Add New");
 
             $.ajax({
-                url: '@Url.Action("Add", "Sells")',
+                url: '@Url.Action("Add", "Transactions")',
                 type: "GET",
                 success: function (result) {
                     $("#topUpModalContent").html(result);
@@ -121,22 +159,16 @@
                     alert(message);
                 }
             });
-
         }
 
         function edit(id) {
             $("#topUpModalContent").html("");
             $("#topUpModalLabel").html("Update");
 
-            var formData = new FormData();
-            formData.append("id", id);
-
             $.ajax({
-                url: '@Url.Action("Edit", "Sells")',
-                type: "POST",
-                processData: false,
-                contentType: false,
-                data: formData,
+                url: '@Url.Action("Edit", "Transactions")',
+                type: "GET",
+                data: { id: id },
                 success: function (result) {
                     $("#topUpModalContent").html(result);
                     $('#topUpModal').modal('show');
@@ -149,19 +181,19 @@
                 }
             });
         }
+
         function create() {
             var data = {
-                payment: $("#PaymentMethod").val(),
-                transactionId: $("#TransactionId").val(),
+                productId: $("#ProductId").val(),
+                quantity: $("#Quantity").val(),
                 note: $("#Note").val(),
-                cashCustomerPay: $("#CashCustomerPay").val(),
-
+                price: $("#Price").val(),
+                typeTransactions: $("#TypeTransactions").val()
             };
 
-            console.log(data);
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("Create", "Sells")',
+                url: '@Url.Action("Create", "Transactions")',
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 data: JSON.stringify(data),
@@ -170,28 +202,30 @@
                         $('#topUpModal').modal('hide');
                         loadData();
                     }
-                    alert("Created new Sell successfully!");
+                    alert("Created new Transaction successfully!");
                 },
                 error: function (xhr, error) {
                     console.log(xhr);
-                    alert(`Something went wrong!`);
+                    alert("Something went wrong!");
                 }
             });
         }
+
         function update(id) {
             var data = {
                 id: id,
-                payment: $("#PaymentMethod").val(),
-                transactionId: $("#TransactionId").val(),
-                status: $("#Status").val(),
+                productId: $("#ProductId").val(),
+                quantity: $("#Quantity").val(),
                 note: $("#Note").val(),
-                cashCustomerPay: $("#CashCustomerPay").val(),
-
+                price: $("#Price").val(),
+                studentBuy: $("#StudentBuy").val(),
+                totalPrice: $("#TotalPrice").val(),
+                typeTransactions: $("#TypeTransactions").val()
             };
-            console.log(data);
+
             $.ajax({
                 type: 'PUT',
-                url: '@Url.Action("Update", "Sells")',
+                url: '@Url.Action("Update", "Transactions")',
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 data: JSON.stringify(data),
@@ -200,26 +234,22 @@
                         $('#topUpModal').modal('hide');
                         loadData();
                     }
-                    alert("Update sell successfully!");
+                    alert("Updated Transaction successfully!");
                 },
                 error: function (xhr, error) {
                     console.log(xhr);
-                    alert(`Something went wrong!`);
+                    alert("Something went wrong!");
                 }
             });
         }
-        function delele(id) {
-            var result = confirm("Are you sure to delete?");
-            if (result) {
-                var formData = new FormData();
-                formData.append("id", id);
 
+        function deleteTransaction(id) {
+            var result = confirm("Are you sure you want to delete?");
+            if (result) {
                 $.ajax({
-                    url: '@Url.Action("Delete", "Sells")',
+                    url: '@Url.Action("Delete", "Transactions")',
                     type: "POST",
-                    processData: false,
-                    contentType: false,
-                    data: formData,
+                    data: { id: id },
                     success: function (result) {
                         if (result.status >= 1) {
                             $('#topUpModal').modal('hide');
@@ -233,10 +263,12 @@
                 });
             }
         }
+
         function searchOrder() {
+
             const orderCode = document.getElementById('orderCode').value;
             $.ajax({
-                url: '@Url.Action("Search", "Sells")',
+                url: '@Url.Action("Search", "Transactions")',
                 type: "POST",
                 data: { orderCode: orderCode },
                 success: function (result) {
@@ -269,6 +301,6 @@
                 }
             });
         }
+
     </script>
 }
-

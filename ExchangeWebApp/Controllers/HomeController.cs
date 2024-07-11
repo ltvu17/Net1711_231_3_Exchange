@@ -21,6 +21,18 @@ namespace ExchangeWebApp.Controllers
         {
             return View("~/Views/Home/UserProfile.cshtml");
         }
+        public IActionResult TransactionOfUser()
+        {
+            return View("~/Views/Transactions/TransactionOfUser.cshtml");
+        }
+        public IActionResult ProductOfUser()
+        {
+            return View("~/Views/Product/ProductOfUser.cshtml");
+        }
+        public IActionResult ProductOfUserToExchange()
+        {
+            return View("~/Views/Product/ProductOfUserToExchange.cshtml");
+        }
         public IActionResult Privacy()
         {
             return View();

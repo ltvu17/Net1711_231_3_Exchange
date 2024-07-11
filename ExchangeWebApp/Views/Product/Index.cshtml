@@ -45,6 +45,13 @@
                 <tbody class="tblTopUpList">
                 </tbody>
             </table>
+            <div id="pagination" class="row">
+                <div class="col-md-12 text-center">
+                    <ul class="pagination">
+                        <!-- Các nút phân trang sẽ được thêm vào đây bằng JavaScript -->
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -143,12 +150,13 @@
         <script type="text/javascript">
             var loadedList = [];
             $(document).ready(function () {
-                loadData();
+                loadData(1);
             });
             function submitAdd(){
                 document.getElementById("addForm").submit();
             }
-            function loadData() {
+        function loadData(page) {
+                var pageSize = 5
                 $.ajax({
                     url: '@Url.Action("GetAll", "Product")',
                     type: "GET",
@@ -156,8 +164,14 @@
                     dataType: "json",
                     success: function (result) {
                         var html = '';
-                        $.each(result, function (key, item) {
-                            loadedList.push(item);
+                        console.log(result)
+                        var startIndex = (page - 1) * pageSize;
+                        var endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
+                        loadedList = result;
+                        console.log(loadedList)
+                        var currentPageItems = result.slice(startIndex, endIndex + 1);
+                        if (currentPageItems.length > 0) {
+                        $.each(currentPageItems, function (key, item) {
                             html += '<tr>';
                             html += '<td class="fs-6">' + item.id + '</td>';
                             html += '<td class="fs-6">' + item.name + '</td>';
@@ -175,18 +189,41 @@
                             html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
                             html += '</tr>';
                         });
+
                         $('.tblTopUpList').html(html);
+                        var totalCount = result.length;
+                        var totalPages = Math.ceil(totalCount / pageSize);
+                        renderPagination(page, totalPages);
+                    } else {
+                        $('.tblTopUpList').html('<tr><td colspan="11">No data available</td></tr>');
+                        $('#pagination ul').empty();
+                    }
+                       
                     },
                     error: function (xhr, error) {
                         alert(xhr.statusText);
                     }
                 });
             }
+
+        function renderPagination(currentPage, totalPages) {
+            var paginationHtml = '';
+            for (var i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationHtml += '<li class="page-item active"><button class="page-link">' + i + '</button></li>';
+                } else {
+                    paginationHtml += '<li class="page-item"><button class="page-link" onclick="loadData(' + i + ')">' + i + '</button></li>';
+                }
+            }
+
+            $('#pagination ul').html(paginationHtml);
+        }
+
             var selectedProduct;
             function searchProduct() {
                 var keyF = document.getElementById("keyFind").value ? document.getElementById("keyFind").value : " ";
                 var methodF = document.getElementById("methodFind").value ? document.getElementById("methodFind").value : 0;
-                if (keyF == " " || methodF == 0) loadData();
+                if (keyF == " " || methodF == 0) loadData(1);
                 else {
                     var html = '';
                     $.each(loadedList, function (key, item) { 
@@ -215,6 +252,7 @@
                         }
                     });
                     $('.tblTopUpList').html(html);
+                    $('#pagination ul').empty();
                 }
             }
             function edit(id) {
@@ -235,7 +273,7 @@
                         alert(message);
                     }
                 });
-                loadData();
+                loadData(1);
             }
 
             function delele(id) {
@@ -297,7 +335,7 @@
                         type: "POST",
                         data: formData,
                         success: function (result) {
-                            loadData();
+                            loadData(1);
                             document.getElementById("btnCloseModal").click();
                         },
                         error: function (message) {
@@ -327,7 +365,7 @@
                         type: "PUT",
                         data: product,
                         success: function (result) {
-                            loadData();
+                            loadData(1);
                             document.getElementById("btnCloseModal").click();
                         },
                         error: function (message) {

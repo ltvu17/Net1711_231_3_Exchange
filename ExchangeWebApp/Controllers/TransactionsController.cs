@@ -46,19 +46,45 @@ namespace ExchangeWebMVC.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<IActionResult> GetTransactionByUser()
+        {
+            try
+            {
+                var transactions = new List<TransactionDTO>();
+
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(apiUrl + "GetAll"))
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ExchangeResult>(content);
+                        if (result != null && result.Status > 0 && result.Data != null)
+                        {
+                            transactions = JsonConvert.DeserializeObject<List<TransactionDTO>>(result.Data.ToString());
+                        }
+                    }
+                }
+
+                return Json(transactions);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
         [HttpGet]
         public IActionResult Add()
         {
             return PartialView("create", new TransactionDTO());
         }
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
 
             try
             {
-                var API_URL_ENDPOINT = "https://localhost:44362/api/Transaction";
+                var API_URL_ENDPOINT = "https://localhost:7134/api/Transaction";
                 using (var httpClient = new HttpClient())
                 {
                     using (var response = await httpClient.GetAsync($"{API_URL_ENDPOINT}/GetById/{id}"))

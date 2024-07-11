@@ -1,0 +1,54 @@
+﻿@model ExchangeWebApp.Models.StudentDTO
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .image-side {
+            flex: 1;
+            padding: 20px;
+            max-width: 300px;
+        }
+        .info-side {
+            flex: 2;
+            padding: 20px;
+        }
+        .info-side h2 {
+            margin-top: 0;
+        }
+        .info-item {
+            margin-bottom: 10px;
+        }
+    </style>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</head>
+<body>
+    <div class="container">
+        <div class="image-side">
+            <img src="@Model.Images" alt="@Model.Name" style="max-width: 100%; height: auto;">
+        </div>
+        <div class="info-side">
+            <h2>@Model.Name</h2>
+            <div class="info-item"><strong>Address:</strong> @Model.Address</div>
+            <div class="info-item"><strong>Phone:</strong> @Model.Phone</div>
+            <div class="info-item"><strong>Rate:</strong> @Model.Rate</div>
+            <div class="info-item"><strong>Status:</strong> @Model.Status</div>
+            <div class="info-item"><strong>User ID:</strong> @Model.UserId</div>
+            <div class="info-item"><strong>Description:</strong> @Model.SeftDescription</div>
+            <div class="info-item"><strong>Total Posts:</strong> @Model.TotalPost</div>
+            <div class="info-item"><strong>Created Date:</strong> @Model.CreatedDate?.ToShortDateString()</div>
+            <div class="info-item"><strong>Inactive Date:</strong> @Model.InactiveIn?.ToShortDateString()</div>
+            <div class="info-item"><strong>Inactive Reason:</strong> @Model.InactiveReason</div>
+        </div>
+    </div>
+</body>
+</html>

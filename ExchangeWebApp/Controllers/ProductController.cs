@@ -42,7 +42,7 @@ namespace ExchangeWebApp.Controllers
                 throw new Exception(ex.Message);
             }
         }
-
+        [HttpGet]
         public async Task<ProductDTO> GetProductById(string id)
         {
             try
@@ -67,7 +67,6 @@ namespace ExchangeWebApp.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        [HttpGet]
         public async Task<IActionResult> GetProductDetailById(string id)
         {
             try
@@ -86,6 +85,30 @@ namespace ExchangeWebApp.Controllers
                 }
 
                 return PartialView("ProductShowDetail", result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<IActionResult> GetProductByUserId()
+        {
+            try
+            {
+                var result = new List<ProductDTO>();
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(apiUrl + "GetProducts"))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            result = JsonConvert.DeserializeObject<List<ProductDTO>>(content);
+                        }
+                    }
+                }
+
+                return View("~/Views/Product/ProductOfUser.cshtml");
             }
             catch (Exception ex)
             {

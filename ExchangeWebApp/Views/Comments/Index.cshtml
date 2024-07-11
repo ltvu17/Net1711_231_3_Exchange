@@ -11,6 +11,15 @@
     <div class="col-md-10">
         <h3 class="display-8">TopUp List</h3>
     </div>
+    <div class="col-md-10 text-end d-flex justify-content-between">
+        <input type="text" class="form-control m-1" id="keyFind" placeholder="Search...." />
+        <select id="methodFind" class="form-control m-1" style="width:90px">
+            <option value="1">Product</option>
+            <option value="2">Content </option>
+            <option value="3">Status</option>
+        </select>
+        <button class="btn btn-primary m-1" id="btnFind" style="min-width:80px" type="button" onclick="searchProduct()">Search</button>
+    </div>
     <div class="col-md-2 text-end">
         <button type="button" class="btn btn-primary" onclick="add()">
             Add
@@ -34,6 +43,13 @@
             <tbody class="tblTopUpList">
             </tbody>
         </table>
+        <div id="pagination" class="row">
+            <div class="col-md-12 text-center">
+                <ul class="pagination">
+                    <!-- Các nút phân trang sẽ được thêm vào đây bằng JavaScript -->
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
@@ -82,19 +98,26 @@
 
 @section scripts {
     <script type="text/javascript">
+        var loadedList = [];
         $(document).ready(function () {
-            loadData();
+            loadData(1);
             //GetAllData
-            function loadData() {
-                $.ajax({
-                    url: '@Url.Action("GetAll", "Comments")',
-                    type: "GET",
-                    contentType: "application/json;charset=utf-8",
-                    dataType: "json",
-                    success: function (result) {
-                        var html = '';
-                        $.each(result, function (key, item) {
-                            console.log(item);
+        });
+        function loadData(page) {
+            var pageSize = 5;
+            $.ajax({
+                url: '@Url.Action("GetAll", "Comments")',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    var startIndex = (page - 1) * pageSize;
+                    var endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
+                    var currentPageItems = result.slice(startIndex, endIndex + 1);
+                    loadedList = result;
+                    if (currentPageItems.length > 0) {
+                        $.each(currentPageItems, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.id + '</td>';
                             html += '<td>' + item.productId + '</td>';
@@ -104,15 +127,60 @@
                             html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                             html += '</tr>';
                         });
+
                         $('.tblTopUpList').html(html);
-                    },
-                    error: function (xhr, error) {
-                        alert(xhr.statusText);
+                        var totalCount = result.length;
+                        var totalPages = Math.ceil(totalCount / pageSize);
+                        renderPagination(page, totalPages);
+                    } else {
+                        $('.tblTopUpList').html('<tr><td colspan="11">No data available</td></tr>');
+                        $('#pagination ul').empty();
+                    }
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+        function renderPagination(currentPage, totalPages) {
+            var paginationHtml = '';
+            for (var i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationHtml += '<li class="page-item active"><button class="page-link">' + i + '</button></li>';
+                } else {
+                    paginationHtml += '<li class="page-item"><button class="page-link" onclick="loadData(' + i + ')">' + i + '</button></li>';
+                }
+            }
+
+            $('#pagination ul').html(paginationHtml);
+        }
+
+        function searchProduct() {
+            var keyF = document.getElementById("keyFind").value ? document.getElementById("keyFind").value : " ";
+            var methodF = document.getElementById("methodFind").value ? document.getElementById("methodFind").value : 0;
+            if (keyF == " " || methodF == 0) loadData(1);
+            else {
+                var html = '';
+                $.each(loadedList, function (key, item) {
+                    var value;
+                    if (methodF == 1) value = item.productId.toString();
+                    else if (methodF == 2) value = item.content.toString();
+                    else if (methodF == 3) value = item.status.toString();
+                    if (value.toLowerCase().includes(keyF.toLowerCase())) {
+                        html += '<tr>';
+                        html += '<td>' + item.id + '</td>';
+                        html += '<td>' + item.productId + '</td>';
+                        html += '<td>' + item.content + '</td>';
+                        html += '<td>' + item.studentId + '</td>';
+                        html += '<td>' + item.status + '</td>';
+                        html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                        html += '</tr>';
                     }
                 });
+                $('.tblTopUpList').html(html);
+                $('#pagination ul').empty();
             }
-        });
-
+        }
         function add() {
             $("#exchangeModalContent").html("");
             $("#exchangeModalLabel").html("Add New");

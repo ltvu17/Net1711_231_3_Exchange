@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http;
+@{
+    var session = Context.Session.GetString("Role");
+
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -47,17 +52,32 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Comments" asp-action="Index">Comment</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Student" asp-action="Index">Student</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Category</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="GetProductByUserId">Post</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="TransactionOfUser">History</a>
+                        </li>
                     </ul>
                 </div>
-                <div style="display: contents; margin-right: 10px">
+@*                 <div style="display: contents; margin-right: 10px">
                     <input class="form-control" style="width: 30%; margin-right: 20px" placeholder="SearchBar" type="text" />
                     <button type="button" class="btn btn-primary" style="margin-right: 20px">Search</button>
-                </div>
-                <div style="display: contents">
-                    <a asp-controller="Home" asp-action="UserProfile">
-                    <img src="../imgs/2.png" alt="avatar" style="width: 50px; height: 50px; border-radius: 25px; display:table-column; margin-bottom: 10px ;border: solid 2px"></img>
-                    </a>
-                </div>
+                </div> *@
+                @if(session != null)
+                {
+                    <div style="display: contents">
+                        <a asp-controller="Home" asp-action="UserProfile">
+                            <img src="../imgs/2.png" alt="avatar" style="width: 50px; height: 50px; border-radius: 25px; display:table-column; margin-bottom: 10px ;border: solid 2px"></img>
+                        </a>
+                    </div>
+                }  
             </div>
         </nav>
     </header>

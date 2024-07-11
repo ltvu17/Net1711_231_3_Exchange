@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExchangeData.Models;
@@ -56,18 +57,23 @@ public partial class Student
     public string? Images { get; set; }
 
     [InverseProperty("Student")]
-    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    [JsonIgnore]
+    public virtual ICollection<Comment>? Comments { get; set; } = new List<Comment>();
 
     [InverseProperty("Student")]
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    [JsonIgnore]
+    public virtual ICollection<Product>? Products { get; set; } = new List<Product>();
 
     [InverseProperty("AssigneeNavigation")]
-    public virtual ICollection<Report> ReportAssigneeNavigations { get; set; } = new List<Report>();
+    [JsonIgnore]
+    public virtual ICollection<Report>? ReportAssigneeNavigations { get; set; } = new List<Report>();
 
     [InverseProperty("ReporterNavigation")]
-    public virtual ICollection<Report> ReportReporterNavigations { get; set; } = new List<Report>();
+    [JsonIgnore]
+    public virtual ICollection<Report>? ReportReporterNavigations { get; set; } = new List<Report>();
 
     [ForeignKey("UserId")]
     [InverseProperty("Students")]
-    public virtual User User { get; set; } = null!;
+    [JsonIgnore]
+    public virtual User? User { get; set; } = null!;
 }

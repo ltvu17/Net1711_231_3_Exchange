@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExchangeData.Models;
@@ -45,9 +46,11 @@ public partial class Exchange
 
     [ForeignKey("ExchangeId")]
     [InverseProperty("Exchanges")]
-    public virtual Product ExchangeNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Product? ExchangeNavigation { get; set; } = null!;
 
     [ForeignKey("TransactionId")]
     [InverseProperty("Exchanges")]
-    public virtual Transaction Transaction { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Transaction? Transaction { get; set; } = null!;
 }

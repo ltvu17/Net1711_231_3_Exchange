@@ -83,10 +83,17 @@ namespace ExchangeBusiness
                 {
                     return new ExchangeResult(-1, "No Data");
                 }
-                exchanges.ExchangeNavigation = newEntity.ExchangeNavigation;
                 exchanges.Status = newEntity.Status;
                 exchanges.Transaction = newEntity.Transaction;
-                _unitOfWork.ExchangeRepository.UpdateAsync(exchanges);
+                exchanges.SendDate = newEntity.SendDate;
+                exchanges.ReceiveDate  = newEntity.ReceiveDate;
+                exchanges.CancelDate = newEntity.CancelDate;
+                exchanges.CancelReason = newEntity.CancelReason;
+                exchanges.ExchangeId = newEntity.ExchangeId;
+                exchanges.ShipCode = newEntity.ShipCode;
+                exchanges.ShipCost = newEntity.ShipCost;
+                exchanges.ShipStatus = newEntity.ShipStatus;
+                await _unitOfWork.ExchangeRepository.UpdateAsync(exchanges);
                 return new ExchangeResult(1, "Update Saved");
             }
             catch

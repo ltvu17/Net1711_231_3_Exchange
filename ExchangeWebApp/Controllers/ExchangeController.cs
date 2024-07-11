@@ -79,6 +79,32 @@ namespace ExchangeWebApp.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateExchangeJS([FromBody] ExchangeDTO entity)
+        {
+            try
+            {
+                IExchangeResult result = new ExchangeResult();
+                var data = new StringContent(JsonConvert.SerializeObject(entity), Encoding.UTF8, "application/json");
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.PostAsync(apiUrl + "Create", data))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            result = JsonConvert.DeserializeObject<ExchangeResult>(content);
+                        }
+                    }
+                }
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         [HttpGet]
         public IActionResult Edit(int id)
         {

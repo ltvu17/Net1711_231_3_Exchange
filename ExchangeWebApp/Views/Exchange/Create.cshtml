@@ -14,7 +14,7 @@
 <div class="form-group row">
     <div class="col-md-12">
         <label for="1">Transaction Id</label>
-        @Html.EditorFor(model => model.ExchangeDTO.TransactionId, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        @Html.EditorFor(model => model.ExchangeDTO.TransactionId, new { htmlAttributes = new { @class = "form-control" } })
     </div>
 </div>
 <div class="form-group row">
@@ -27,5 +27,47 @@
     <div class="col-md-12">
         <label for="1">Status</label>
         @Html.EditorFor(model => model.ExchangeDTO.Status, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label for="1">SendDate</label>
+        @Html.EditorFor(model => model.ExchangeDTO.SendDate, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label for="1">ReceiveDate</label>
+        @Html.EditorFor(model => model.ExchangeDTO.ReceiveDate, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label for="1">CancelDate</label>
+        @Html.EditorFor(model => model.ExchangeDTO.CancelDate, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label for="1">CancelReason</label>
+        @Html.EditorFor(model => model.ExchangeDTO.CancelReason, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label for="1">ShipCost</label>
+        @Html.EditorFor(model => model.ExchangeDTO.ShipCost, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label for="1">ShipCode</label>
+        @Html.EditorFor(model => model.ExchangeDTO.ShipCode, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label for="1">ShipStatus</label>
+        @Html.EditorFor(model => model.ExchangeDTO.ShipStatus, new { htmlAttributes = new { @class = "form-control" } })
     </div>
 </div>

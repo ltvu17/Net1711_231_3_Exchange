@@ -19,6 +19,7 @@ namespace ExchangeData
         private TransactionRepository _transaction;
         private CategoriesRepository _categoriesRepository;
         private CommentsRepository _commentssRepository;
+        private StudentRepository _studentRepository;
         public UnitOfWork()
         {
             _context = new Net17112313ExchangeContext();
@@ -64,6 +65,10 @@ namespace ExchangeData
             {
                 return _commentssRepository ??= new CommentsRepository(_context);
             }
+        }
+        public StudentRepository StudentRepository
+        {
+            get { return _studentRepository ??= new Repository.StudentRepository(_context); }
         }
     }
 }

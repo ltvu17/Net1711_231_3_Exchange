@@ -17,7 +17,7 @@
         <div id="content" class="col-lg-8 content" style="max-height: 100%;max-width: 100%">
     <div class="align-content-center align-items-center text-center" style="margin: 2%;">
         <div style=" width: 100%">
-        <a href="#" style="" onclick="Detail()">
+        <a href="#" style="">
             <div>
                 <img src="@img" alt="haha" style="width: 100%; min-height: 60vh ;display:table-column; border-radius: 10px; padding-bottom: 5px"></img>
             </div>
@@ -45,10 +45,7 @@
                 <p style="font-weight: 500">- @Model.Name</p>
                 <p style="font-weight: 500">- @Model.Title</p>
                     <p style="font-weight: 300">
-                        - @Model.ContentPost 14 pro max 256g black kh/a xài được một sim vật lý và một e sim pin 95% zin áp suất máy có trầy nhẹ nhìn kỷ mới thấy
-                        Hỗ trợ :
-                        𝟏.𝐓𝐫𝐚̉ 𝐠𝐨́𝐩 𝟎% 𝐥𝐚̃𝐢 𝐬𝐮𝐚̂́𝐭 bằng thẻ tín dụng lãi suất 0% có phí chuyển đổi
-                        2. Hỗ trợ trả góp bằng CMND và bằng lái hoặc căn cước công dân có chíp - Hồ sơ đơn giản - Chỉ cần CCCD - Duyệt nhanh 20 phút nhận máy ngay.
+                        - @Model.ContentPost
                     </p>
                 <p style="font-weight: 300; color: red">- Price: @Model.Price VND</p>
             </div>
@@ -87,9 +84,39 @@
     <script type="text/javascript">
         function Report(id) {
             console.log(id)
+            var data = {
+            "id": 0,
+            "reporter": 3,
+            "assignee": 7,
+            "productId": id,
+            "reportTime": "2024-07-11T03:05:39.036Z",
+            "reason": "Violating post",
+            "reply": "",
+            "status": 0
+            }
+            if (confirm("You want to REPORT this product") == true) {
+                $.ajax({
+                    url: '@Url.Action("CreateReport", "Reports")',
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(data),
+                    success: function (result) {
+                        console.log(result);
+                        createSell(result.data);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+            else {
+                alert("cancel");
+            }
         }
         function Exchange(id) {
             console.log(id)
+            window.location.replace("https://localhost:7076/Home/ProductOfUserToExchange");
         }
         function Order(id, price) {
             console.log(id)

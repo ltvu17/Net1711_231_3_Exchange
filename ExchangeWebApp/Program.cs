@@ -9,6 +9,10 @@ namespace ExchangeWebApp
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ICommonService, CommonService>();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+            });
             var app = builder.Build();
             
             // Configure the HTTP request pipeline.
@@ -25,10 +29,11 @@ namespace ExchangeWebApp
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Auth}/{action=Index}/{id?}");
 
             app.Run();
         }

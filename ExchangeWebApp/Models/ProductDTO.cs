@@ -12,7 +12,7 @@ namespace ExchangeWebApp.Models
 
         public int Status { get; set; } = 1;
 
-        public int StudentId { get; set; } = 2;
+        public int StudentId { get; set; } = 3;
 
         public DateTime CreateOn { get; set; } = new DateTime();
 

@@ -62,9 +62,9 @@
                         $.each(result, function (key, item) {
                            
                          html += `<div class="align-content-center align-items-center text-center" style="margin: 5%;">
-                        <div style="border-bottom: solid 1px; width: 100%">
+                        <div style="border-bottom: solid 1px; width: 100%; max-height: 80vh">
                             <div style="display: flex;">
-                                <img src="../imgs/2.png" alt="avatar" style="width: 50px; height: 50px; border-radius: 25px; display:table-column; margin-bottom: 10px"></img>
+                                <img src="../imgs/2.png" alt="avatar" style="width: 30px; height: 30px; border-radius: 15px; display:table-column; margin-bottom: 10px"></img>
                                 <div style="margin-left: 1%">
                                     <h6>UserName</h6>
                                     <p style="margin-left: 10px; font-weight:100 ; font-size: small">${item.createOn.split("T")[0]}</p>
@@ -72,7 +72,7 @@
                             </div>
                             <a href="#" style="" onclick="Detail(${item.id})">
                             <div>
-                                <img src="${item.imgKey ? item.imgKey : "../imgs/loading.png"}" alt="Product img" style="width: 100%; max-height: 200% ;display:table-column; border-radius: 10px; padding-bottom: 5px"></img>
+                                        <img src="${item.imgKey ? item.imgKey : "../imgs/loading.png"}" alt="Product img" style="width: 100%; max-height: 60vh ;display:table-column; border-radius: 10px; padding-bottom: 5px"></img>
                             </div>
                             </a>
                             <div style="text-align : start">

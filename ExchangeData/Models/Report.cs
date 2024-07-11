@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExchangeData.Models;
@@ -45,17 +46,21 @@ public partial class Report
 
     [ForeignKey("ApproveBy")]
     [InverseProperty("Reports")]
+    [JsonIgnore]
     public virtual User? ApproveByNavigation { get; set; }
 
     [ForeignKey("Assignee")]
     [InverseProperty("ReportAssigneeNavigations")]
-    public virtual Student AssigneeNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Student? AssigneeNavigation { get; set; } = null!;
 
     [ForeignKey("ProductId")]
     [InverseProperty("Reports")]
-    public virtual Product Product { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Product? Product { get; set; } = null!;
 
     [ForeignKey("Reporter")]
     [InverseProperty("ReportReporterNavigations")]
-    public virtual Student ReporterNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Student? ReporterNavigation { get; set; } = null!;
 }
