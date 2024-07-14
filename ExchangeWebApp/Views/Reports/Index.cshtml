@@ -83,15 +83,15 @@
         $(document).ready(function () {
             loadData(1);
         });
-
+        var searchList = [];
         function loadData(page) {
             var pageSize = 5;
-            $.ajax({
-                url: '@Url.Action("GetAll", "Reports")',
-                type: "GET",
-                success: function (result) {
-                    var html = '';
-
+            if (searchList.length == 0) {
+                $.ajax({
+                    url: '@Url.Action("GetAll", "Reports")',
+                    type: "GET",
+                    success: function (result) {
+                        var html = '';
                         var startIndex = (page - 1) * pageSize;
                         var endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
                         var currentPageItems = result.slice(startIndex, endIndex + 1);
@@ -121,12 +121,44 @@
                             $('.tblList').html('<tr><td colspan="11">No data available</td></tr>');
                             $('#pagination ul').empty();
                         }
-                },
-                error: function (xhr, error) {
-                    alert(xhr.statusText);
-                    alert(`Something went wrong!`);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                        alert(`Something went wrong!`);
+                    }
+                });
+            } else {
+                var html = '';
+                var startIndex = (page - 1) * pageSize;
+                var endIndex = Math.min(startIndex + pageSize - 1, searchList.length - 1);
+                var currentPageItems = searchList.slice(startIndex, endIndex + 1);
+                if (currentPageItems.length > 0) {
+                    $.each(currentPageItems, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.id + '</td>';
+                        html += '<td>' + item.reporter + '</td>';
+                        html += '<td>' + item.assignee + '</td>';
+                        html += '<td>' + item.productId + '</td>';
+                        html += '<td>' + item.reportTime + '</td>';
+                        html += '<td>' + item.reason + '</td>';
+                        html += '<td>' + item.approveBy + '</td>';
+                        html += '<td>' + item.approveTime + '</td>';
+                        html += '<td>' + item.reply + '</td>';
+                        html += '<td>' + item.status + '</td>';
+                        html += '<td><button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                        html += '</tr>';
+                    });
+
+                    $('.tblList').html(html);
+                    var totalCount = searchList.length;
+                    var totalPages = Math.ceil(totalCount / pageSize);
+                    renderPagination(page, totalPages);
+                } else {
+                    $('.tblList').html('<tr><td colspan="11">No data available</td></tr>');
+                    $('#pagination ul').empty();
                 }
-            });
+            }
+            
         }
         function renderPagination(currentPage, totalPages) {
             var paginationHtml = '';
@@ -142,34 +174,79 @@
         }
         function searchProduct() {
             var keyF = document.getElementById("keyFind").value ? document.getElementById("keyFind").value : " ";
-            var methodF = document.getElementById("methodFind").value ? document.getElementById("methodFind").value : 0;
-            if (keyF == " " || methodF == 0) loadData(1);
+            if (keyF == " " || methodF == 0) {
+                searchList = [];
+                loadData(1);
+            }
             else {
+                var split = keyF.split(",");
+                var methodF = split.length;
                 var html = '';
                 $.each(loadedList, function (key, item) {
-                    var value;
-                    if (methodF == 1) value = item.reporter.toString();
-                    else if (methodF == 2) value = item.assignee.toString();
-                    else if (methodF == 3) value = item.productId.toString();
-                    console.log(html)
-                    if (value.toLowerCase().includes(keyF.toLowerCase())) {
-                        html += '<tr>';
-                        html += '<td>' + item.id + '</td>';
-                        html += '<td>' + item.reporter + '</td>';
-                        html += '<td>' + item.assignee + '</td>';
-                        html += '<td>' + item.productId + '</td>';
-                        html += '<td>' + item.reportTime + '</td>';
-                        html += '<td>' + item.reason + '</td>';
-                        html += '<td>' + item.approveBy + '</td>';
-                        html += '<td>' + item.approveTime + '</td>';
-                        html += '<td>' + item.reply + '</td>';
-                        html += '<td>' + item.status + '</td>';
-                        html += '<td><button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
-                        html += '</tr>';
+                    var value1, value2, value3;
+                    if (methodF == 1) {
+                        value1 = item.reporter.toString();
+                        if (value1.toLowerCase() == split[0].toLowerCase()) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.reporter + '</td>';
+                            html += '<td>' + item.assignee + '</td>';
+                            html += '<td>' + item.productId + '</td>';
+                            html += '<td>' + item.reportTime + '</td>';
+                            html += '<td>' + item.reason + '</td>';
+                            html += '<td>' + item.approveBy + '</td>';
+                            html += '<td>' + item.approveTime + '</td>';
+                            html += '<td>' + item.reply + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td><button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
+                    }
+                    else if (methodF == 2) {
+                        value1 = item.reporter.toString();
+                        value2 = item.reason.toString();
+                        if (value1.toLowerCase() == split[0].toLowerCase() && value2.toLowerCase().includes(split[1].toLowerCase())) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.reporter + '</td>';
+                            html += '<td>' + item.assignee + '</td>';
+                            html += '<td>' + item.productId + '</td>';
+                            html += '<td>' + item.reportTime + '</td>';
+                            html += '<td>' + item.reason + '</td>';
+                            html += '<td>' + item.approveBy + '</td>';
+                            html += '<td>' + item.approveTime + '</td>';
+                            html += '<td>' + item.reply + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td><button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
+                    }
+                    else if (methodF == 3) {
+                        value1 = item.reporter.toString();
+                        value2 = item.reason.toString();
+                        value3 = item.productId.toString();
+                        if (value1.toLowerCase() == split[0].toLowerCase() && value2.toLowerCase().includes(split[1].toLowerCase()) && value3.toLowerCase() == split[2].toLowerCase()) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.reporter + '</td>';
+                            html += '<td>' + item.assignee + '</td>';
+                            html += '<td>' + item.productId + '</td>';
+                            html += '<td>' + item.reportTime + '</td>';
+                            html += '<td>' + item.reason + '</td>';
+                            html += '<td>' + item.approveBy + '</td>';
+                            html += '<td>' + item.approveTime + '</td>';
+                            html += '<td>' + item.reply + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td><button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
                     }
                 });
                 $('.tblList').html(html);
-                $('#pagination ul').empty();
+                loadData(1);
             }
         }
         function add() {

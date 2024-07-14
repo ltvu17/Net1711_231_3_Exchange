@@ -13,12 +13,7 @@
         <h3 class="display-8">Exchange List</h3>
     </div>
     <div class="col-md-10 text-end d-flex justify-content-between">
-        <input type="text" class="form-control m-1" id="keyFind" placeholder="Search...." />
-        <select id="methodFind" class="form-control m-1" style="width:90px">
-            <option value="1">Product</option>
-            <option value="2">Transaction </option>
-            <option value="3">Status</option>
-        </select>
+        <input type="text" class="form-control m-1" id="keyFind" placeholder="Product,Transaction,Status" />
         <button class="btn btn-primary m-1" id="btnFind" style="min-width:80px" type="button" onclick="searchProduct()">Search</button>
     </div>
     <div class="col-md-2 text-end">
@@ -107,77 +102,61 @@
         var loadedList = [];
         $(document).ready(function () {
             loadData(1);
-            //GetAllData
         });
+        var searchList = [];
         function loadData(page) {
-            var pageSize = 5;
-            $.ajax({
-                url: '@Url.Action("GetAll", "Exchange")',
-                type: "GET",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (result) {
-                    var startIndex = (page - 1) * pageSize;
-                    var endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
-                    var currentPageItems = result.slice(startIndex, endIndex + 1);
-                    loadedList = result;
-                    var html = '';
-                    if (currentPageItems.length > 0) {
-                        $.each(currentPageItems, function (key, item) {
-                            html += '<tr>';
-                            html += '<td>' + item.id + '</td>';
-                            html += '<td>' + item.exchangeId + '</td>';
-                            html += '<td>' + item.transactionId + '</td>';
-                            html += '<td>' + item.status + '</td>';
-                            html += '<td>' + item.sendDate + '</td>';
-                            html += '<td>' + item.receiveDate + '</td>';
-                            html += '<td>' + item.cancelDate + '</td>';
-                            html += '<td>' + item.cancelReason + '</td>';
-                            html += '<td>' + item.shipCost + '</td>';
-                            html += '<td>' + item.shipCode + '</td>';
-                            html += '<td>' + item.shipStatus + '</td>';
-                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
-                            html += '</tr>';
-                        });
+            if (searchList.length == 0) {
+                var pageSize = 5;
+                $.ajax({
+                    url: '@Url.Action("GetAll", "Exchange")',
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        var startIndex = (page - 1) * pageSize;
+                        var endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
+                        var currentPageItems = result.slice(startIndex, endIndex + 1);
+                        loadedList = result;
+                        var html = '';
+                        if (currentPageItems.length > 0) {
+                            $.each(currentPageItems, function (key, item) {
+                                html += '<tr>';
+                                html += '<td>' + item.id + '</td>';
+                                html += '<td>' + item.exchangeId + '</td>';
+                                html += '<td>' + item.transactionId + '</td>';
+                                html += '<td>' + item.status + '</td>';
+                                html += '<td>' + item.sendDate + '</td>';
+                                html += '<td>' + item.receiveDate + '</td>';
+                                html += '<td>' + item.cancelDate + '</td>';
+                                html += '<td>' + item.cancelReason + '</td>';
+                                html += '<td>' + item.shipCost + '</td>';
+                                html += '<td>' + item.shipCode + '</td>';
+                                html += '<td>' + item.shipStatus + '</td>';
+                                html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                                html += '</tr>';
+                            });
 
-                        $('.tblTopUpList').html(html);
-                        var totalCount = result.length;
-                        var totalPages = Math.ceil(totalCount / pageSize);
-                        renderPagination(page, totalPages);
-                    } else {
-                        $('.tblTopUpList').html('<tr><td colspan="11">No data available</td></tr>');
-                        $('#pagination ul').empty();
+                            $('.tblTopUpList').html(html);
+                            var totalCount = result.length;
+                            var totalPages = Math.ceil(totalCount / pageSize);
+                            renderPagination(page, totalPages);
+                        } else {
+                            $('.tblTopUpList').html('<tr><td colspan="11">No data available</td></tr>');
+                            $('#pagination ul').empty();
+                        }
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
                     }
-                },
-                error: function (xhr, error) {
-                    alert(xhr.statusText);
-                }
-            });
-        }
-        function renderPagination(currentPage, totalPages) {
-            var paginationHtml = '';
-            for (var i = 1; i <= totalPages; i++) {
-                if (i === currentPage) {
-                    paginationHtml += '<li class="page-item active"><button class="page-link">' + i + '</button></li>';
-                } else {
-                    paginationHtml += '<li class="page-item"><button class="page-link" onclick="loadData(' + i + ')">' + i + '</button></li>';
-                }
-            }
-
-            $('#pagination ul').html(paginationHtml);
-        }
-        function searchProduct() {
-            var keyF = document.getElementById("keyFind").value ? document.getElementById("keyFind").value : " ";
-            var methodF = document.getElementById("methodFind").value ? document.getElementById("methodFind").value : 0;
-            if (keyF == " " || methodF == 0) loadData(1);
-            else {
+                });
+            } else {
+                var pageSize = 5;
+                var startIndex = (page - 1) * pageSize;
+                var endIndex = Math.min(startIndex + pageSize - 1, searchList.length - 1);
+                var currentPageItems = searchList.slice(startIndex, endIndex + 1);
                 var html = '';
-                $.each(loadedList, function (key, item) {
-                    var value;
-                    if (methodF == 1) value = item.exchangeId.toString();
-                    else if (methodF == 2) value = item.transactionId.toString();
-                    else if (methodF == 3) value = item.status.toString();
-                    if (value.toLowerCase().includes(keyF.toLowerCase())) {
+                if (currentPageItems.length > 0) {
+                    $.each(currentPageItems, function (key, item) {
                         html += '<tr>';
                         html += '<td>' + item.id + '</td>';
                         html += '<td>' + item.exchangeId + '</td>';
@@ -192,10 +171,108 @@
                         html += '<td>' + item.shipStatus + '</td>';
                         html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                         html += '</tr>';
+                    });
+                    $('.tblTopUpList').html(html);
+                    var totalCount = searchList.length;
+                    var totalPages = Math.ceil(totalCount / pageSize);
+                    renderPagination(page, totalPages);
+                } else {
+                    $('.tblTopUpList').html('<tr><td colspan="11">No data available</td></tr>');
+                    $('#pagination ul').empty();
+                }
+            }
+            
+        }
+        function renderPagination(currentPage, totalPages) {
+            var paginationHtml = '';
+            for (var i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationHtml += '<li class="page-item active"><button class="page-link">' + i + '</button></li>';
+                } else {
+                    paginationHtml += '<li class="page-item"><button class="page-link" onclick="loadData(' + i + ')">' + i + '</button></li>';
+                }
+            }
+
+            $('#pagination ul').html(paginationHtml);
+        }
+        function searchProduct() {
+            searchList = [];
+            var keyF = document.getElementById("keyFind").value ? document.getElementById("keyFind").value : " ";
+            if (keyF == " " || methodF == 0) loadData(1);
+            else {
+                var split = keyF.split(",");
+                console.log(split);
+                var methodF = split.length;
+                var html = '';
+                $.each(loadedList, function (key, item) {
+                    var value1, value2, value3;
+                    if (methodF == 1) {
+                        value1 = item.exchangeId.toString();
+                        if (value1.toLowerCase() == split[0].toLowerCase()) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.exchangeId + '</td>';
+                            html += '<td>' + item.transactionId + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td>' + item.sendDate + '</td>';
+                            html += '<td>' + item.receiveDate + '</td>';
+                            html += '<td>' + item.cancelDate + '</td>';
+                            html += '<td>' + item.cancelReason + '</td>';
+                            html += '<td>' + item.shipCost + '</td>';
+                            html += '<td>' + item.shipCode + '</td>';
+                            html += '<td>' + item.shipStatus + '</td>';
+                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
+                    }
+                    else if (methodF == 2) {
+                        value1 = item.exchangeId.toString();
+                        value2 = item.transactionId.toString();
+                        if (value1.toLowerCase() == split[0].toLowerCase() && value2.toLowerCase() == split[1].toLowerCase()) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.exchangeId + '</td>';
+                            html += '<td>' + item.transactionId + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td>' + item.sendDate + '</td>';
+                            html += '<td>' + item.receiveDate + '</td>';
+                            html += '<td>' + item.cancelDate + '</td>';
+                            html += '<td>' + item.cancelReason + '</td>';
+                            html += '<td>' + item.shipCost + '</td>';
+                            html += '<td>' + item.shipCode + '</td>';
+                            html += '<td>' + item.shipStatus + '</td>';
+                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
+                    }
+                    else if (methodF == 3) {
+                        value1 = item.exchangeId.toString();
+                        value2 = item.transactionId.toString();
+                        value3 = item.status.toString();
+                        if (value1.toLowerCase() == split[0].toLowerCase() && value2.toLowerCase() == split[1].toLowerCase() && value3.toLowerCase() == split[2].toLowerCase()) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.exchangeId + '</td>';
+                            html += '<td>' + item.transactionId + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td>' + item.sendDate + '</td>';
+                            html += '<td>' + item.receiveDate + '</td>';
+                            html += '<td>' + item.cancelDate + '</td>';
+                            html += '<td>' + item.cancelReason + '</td>';
+                            html += '<td>' + item.shipCost + '</td>';
+                            html += '<td>' + item.shipCode + '</td>';
+                            html += '<td>' + item.shipStatus + '</td>';
+                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
                     }
                 });
                 $('.tblTopUpList').html(html);
                 $('#pagination ul').empty();
+                loadData(1);
             }
         }
         function add() {
