@@ -4,29 +4,39 @@
     <div class="col-md-6">
         <label for="1">Reporter</label>
         @Html.DropDownListFor(model => model.Reporter, new SelectList(new[] {
-        new { Value = 1, Text = "Vu" },
-        new { Value = 2, Text = "Cuong" },
-        new { Value = 1002, Text = "Nhat" }
+        new { Value = 3, Text = "Student 1" },
+        new { Value = 4, Text = "Student 2" },
+        new { Value = 7, Text = "Student 3" },
+        new { Value = 8, Text = "Student 4" },
+        new { Value = 9, Text = "Student 5" },
+        new { Value = 10, Text = "Student 6" }
         }, "Value", "Text"), new { @class = "form-control" })
     </div>
     <div class="col-md-6">
         <label for="1">Assignee</label>
         @Html.DropDownListFor(model => model.Assignee, new SelectList(new[] {
-        new { Value = 1, Text = "Vu" },
-        new { Value = 2, Text = "Cuong" },
-        new { Value = 1002, Text = "Nhat" }
+        new { Value = 3, Text = "Student 1" },
+        new { Value = 4, Text = "Student 2" },
+        new { Value = 7, Text = "Student 3" },
+        new { Value = 8, Text = "Student 4" },
+        new { Value = 9, Text = "Student 5" },
+        new { Value = 10, Text = "Student 6" }
         }, "Value", "Text"), new { @class = "form-control" })
     </div>
     <div class="col-md-6">
         <label for="1">Product</label>
         @Html.DropDownListFor(model => model.ProductId, new SelectList(new[] {
-        new { Value = 3, Text = "Truyen Doremon" },
+        new { Value = 1010, Text = "Truyen cu" },
+        new { Value = 1025, Text = "Phim cu" },
+        new { Value = 1026, Text = "Ban ghe cu" },
+        new { Value = 1027, Text = "Balo" },
+        new { Value = 1028, Text = "Non bao hiem" },
         }, "Value", "Text"), new { @class = "form-control" })
     </div>
     <div class="col-md-6">
         <label for="1">Approve By</label>
         @Html.DropDownListFor(model => model.ApproveBy, new SelectList(new[] {
-        new { Value = 1, Text = "Admin" },
+        new { Value = "string", Text = "Admin" },
         }, "Value", "Text"), new { @class = "form-control" })
     </div>
     <div class="col-md-6">
