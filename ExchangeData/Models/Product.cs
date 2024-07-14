@@ -23,7 +23,7 @@ public partial class Product
     public int Quantity { get; set; }
 
     [Column("status")]
-    public int Status { get; set; }
+    public int Status { get; set; } = 1;
 
     [Column("student_id")]
     public int StudentId { get; set; }

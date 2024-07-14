@@ -153,6 +153,31 @@ namespace ExchangeWebApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Detail(string id)
+        {
+            try
+            {
+                var result = new ProductDTO();
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(apiUrl + "GetProduct?id=" + id))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            result = JsonConvert.DeserializeObject<ProductDTO>(content);
+                        }
+                    }
+                }
+                return PartialView("Detail", result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
             try
@@ -170,6 +195,32 @@ namespace ExchangeWebApp.Controllers
                     }
                 }
                 return PartialView("Edit", result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> InactiveProduct(string id)
+        {
+            try
+            {
+                var result = await GetProductById(id);
+                result.Status = 0;
+                using (var httpClient = new HttpClient())
+                {
+                    var json = JsonConvert.SerializeObject(result);
+                    var data = new StringContent(json, Encoding.UTF8, "application/json");
+                    using (var response = await httpClient.PutAsync(apiUrl + "UpdateProduct", data))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+
+                        }
+                    }
+                }
+                return View("Index");
             }
             catch (Exception ex)
             {

@@ -99,11 +99,37 @@ namespace ExchangeWebApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Detail(int id)
+        {
+            try
+            {
+                var result = new ReportDTO();
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync($"{apiUrl + "GetReportById"}/{id}"))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            result = JsonConvert.DeserializeObject<ReportDTO>(content);
+                        }
+                    }
+                }
+
+                return PartialView("Detail", result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                ReportDTO result = null;
+                var result = new ReportDTO();
                 using (var httpClient = new HttpClient())
                 {
                     using (var response = await httpClient.GetAsync($"{apiUrl + "GetReportById"}/{id}"))

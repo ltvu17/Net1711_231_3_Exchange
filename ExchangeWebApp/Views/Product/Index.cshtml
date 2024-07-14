@@ -125,21 +125,40 @@
                 {
                     @Html.AntiForgeryToken()
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exchangeModalLabelUpdate">TopUp Transaction</h5>
+                        <h5 class="modal-title" id="exchangeModalLabelUpdate">Update</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div id="exchangeModalContentUpdate"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" id="editBtn" class="btn btn-primary">Save</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 }
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                @using (Html.BeginForm("UpdateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data", name = "frm1", id = "frm1" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Detail</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="detailModalContent"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
     @section scripts {
         <script type="text/javascript">
@@ -181,7 +200,7 @@
                                 html += '<td class="text-end fs-6">' + item.approveDate + '</td>';
                                 html += '<td class="text-end fs-6">' + item.categoryId + '</td>';
                                 html += '<td class="text-end"><img src="' + (item.imgKey ? item.imgKey : "../imgs/loading.png") + '" style="width:auto; height:100px"/></td>';
-                                html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
+                                html += '<td><a href="#" onclick="return detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
                                 html += '</tr>';
                             });
                             $('.tblTopUpList').html(html);
@@ -220,7 +239,7 @@
                         html += '<td class="text-end fs-6">' + item.approveDate + '</td>';
                         html += '<td class="text-end fs-6">' + item.categoryId + '</td>';
                         html += '<td class="text-end"><img src="' + (item.imgKey ? item.imgKey : "../imgs/loading.png") + '" style="width:auto; height:100px"/></td>';
-                        html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
+                        html += '<td><a href="#" onclick="return detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
                         html += '</tr>';
                     });
                     $('.tblTopUpList').html(html);
@@ -278,7 +297,7 @@
                                 html += '<td class="text-end fs-6">' + item.approveDate + '</td>';
                                 html += '<td class="text-end fs-6">' + item.categoryId + '</td>';
                                 html += '<td class="text-end"><img src="' + (item.imgKey ? item.imgKey : "../imgs/loading.png") + '" style="width:auto; height:100px"/></td>';
-                                html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
+                                html += '<td><a href="#" onclick="return detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
                                 html += '</tr>';
                                 searchList.push(item);
                             }
@@ -301,7 +320,7 @@
                                 html += '<td class="text-end fs-6">' + item.approveDate + '</td>';
                                 html += '<td class="text-end fs-6">' + item.categoryId + '</td>';
                                 html += '<td class="text-end"><img src="' + (item.imgKey ? item.imgKey : "../imgs/loading.png") + '" style="width:auto; height:100px"/></td>';
-                                html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
+                                html += '<td><a href="#" onclick="return detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
                                 html += '</tr>';
                                 searchList.push(item);
                             }
@@ -325,7 +344,7 @@
                                 html += '<td class="text-end fs-6">' + item.approveDate + '</td>';
                                 html += '<td class="text-end fs-6">' + item.categoryId + '</td>';
                                 html += '<td class="text-end"><img src="' + (item.imgKey ? item.imgKey : "../imgs/loading.png") + '" style="width:auto; height:100px"/></td>';
-                                html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
+                                html += '<td><a href="#" onclick="return detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>';
                                 html += '</tr>';
                                 searchList.push(item);
                             }
@@ -356,12 +375,31 @@
                 loadData(1);
             }
 
+            function detail(id) {
+                $("#detailModalContent").html("");
+                var formData1 = new FormData();
+                formData1.append("Id", id);
+                $.ajax({
+                url: '@Url.Action("Detail", "Product")',
+                    type: "GET",
+                    data: { id: id },
+                    success: function (result) {
+                        console.log(result);
+                        $("#detailModalContent").html(result);
+                        $('#detailModal').modal('show');
+                    },
+                    error: function (message) {
+                        alert(message);
+                    }
+                });
+                loadData(1);
+            }
+
             function delele(id) {
-                console.log("ahsidhaoid" + id);
                 var result = confirm("Are you sure to delete?");
                 if (result) {
                     $.ajax({
-                        url: '@Url.Action("DeleteProduct", "Product")' + `?id=${id}`,
+                        url: '@Url.Action("DeleteProduct", "Product")' +`?id=${id}`,
                         type: "DELETE",
                         processData: false,
                         contentType: false,

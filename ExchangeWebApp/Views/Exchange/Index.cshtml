@@ -96,7 +96,26 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="exchangeModalDetail" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("UpdateExchange", "Exchange", FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exchangeModalLabelDetail">TopUp Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="exchangeModalContentDetail"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 @section scripts {
     <script type="text/javascript">
         var loadedList = [];
@@ -132,7 +151,7 @@
                                 html += '<td>' + item.shipCost + '</td>';
                                 html += '<td>' + item.shipCode + '</td>';
                                 html += '<td>' + item.shipStatus + '</td>';
-                                html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                                html += '<td><a href="#" onclick="detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                                 html += '</tr>';
                             });
 
@@ -169,7 +188,7 @@
                         html += '<td>' + item.shipCost + '</td>';
                         html += '<td>' + item.shipCode + '</td>';
                         html += '<td>' + item.shipStatus + '</td>';
-                        html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                        html += '<td><a href="#" onclick="detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                         html += '</tr>';
                     });
                     $('.tblTopUpList').html(html);
@@ -208,7 +227,7 @@
                     var value1, value2, value3;
                     if (methodF == 1) {
                         value1 = item.exchangeId.toString();
-                        if (value1.toLowerCase() == split[0].toLowerCase()) {
+                        if (value1.toLowerCase().includes(split[0].toLowerCase())) {
                             html += '<tr>';
                             html += '<td>' + item.id + '</td>';
                             html += '<td>' + item.exchangeId + '</td>';
@@ -221,7 +240,7 @@
                             html += '<td>' + item.shipCost + '</td>';
                             html += '<td>' + item.shipCode + '</td>';
                             html += '<td>' + item.shipStatus + '</td>';
-                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                            html += '<td><a href="#" onclick="detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                             html += '</tr>';
                             searchList.push(item);
                         }
@@ -229,7 +248,7 @@
                     else if (methodF == 2) {
                         value1 = item.exchangeId.toString();
                         value2 = item.transactionId.toString();
-                        if (value1.toLowerCase() == split[0].toLowerCase() && value2.toLowerCase() == split[1].toLowerCase()) {
+                        if (value1.toLowerCase().includes(split[0].toLowerCase()) && value2.toLowerCase().includes(split[1].toLowerCase())) {
                             html += '<tr>';
                             html += '<td>' + item.id + '</td>';
                             html += '<td>' + item.exchangeId + '</td>';
@@ -242,7 +261,7 @@
                             html += '<td>' + item.shipCost + '</td>';
                             html += '<td>' + item.shipCode + '</td>';
                             html += '<td>' + item.shipStatus + '</td>';
-                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                            html += '<td><a href="#" onclick="detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                             html += '</tr>';
                             searchList.push(item);
                         }
@@ -251,7 +270,7 @@
                         value1 = item.exchangeId.toString();
                         value2 = item.transactionId.toString();
                         value3 = item.status.toString();
-                        if (value1.toLowerCase() == split[0].toLowerCase() && value2.toLowerCase() == split[1].toLowerCase() && value3.toLowerCase() == split[2].toLowerCase()) {
+                        if (value1.toLowerCase().includes(split[0].toLowerCase()) && value2.toLowerCase().includes(split[1].toLowerCase()) && value3.toLowerCase().includes(split[2].toLowerCase())) {
                             html += '<tr>';
                             html += '<td>' + item.id + '</td>';
                             html += '<td>' + item.exchangeId + '</td>';
@@ -264,7 +283,7 @@
                             html += '<td>' + item.shipCost + '</td>';
                             html += '<td>' + item.shipCode + '</td>';
                             html += '<td>' + item.shipStatus + '</td>';
-                            html += '<td><a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
+                            html += '<td><a href="#" onclick="detail(\'' + item.id + '\')">Detail</a> |<a href="#" onclick="edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="deleteItem(\'' + item.id + '\')">Delete</a></td>';
                             html += '</tr>';
                             searchList.push(item);
                         }
@@ -291,6 +310,24 @@
                 }
             });
         };
+        function detail(itemId) {
+            $("#exchangeModalContentDetail").html("");
+            $("#exchangeModalLabelDetail").html("Detail");
+
+            $.ajax({
+                url: '@Url.Action("Detail", "Exchange")' + `?id=${itemId}`,
+                type: "GET",
+                success: function (result) {
+                    $("#exchangeModalContentDetail").html(result);
+                    $('#exchangeModalDetail').modal('show');
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+        };
+
+
         function edit(itemId) {
             $("#exchangeModalContentEdit").html("");
             $("#exchangeModalLabelEdit").html("Edit");

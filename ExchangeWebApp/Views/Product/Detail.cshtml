@@ -1,0 +1,41 @@
+﻿@model ProductDTO
+    <div class="row">
+        <div class="col-md-4 text-start">
+            <label for="mahh" class="col-form-label">Product Id:</label>
+            <input type="text" class="form-control" asp-for="Id" readonly>
+        </div>
+        <div class="col-md-4 text-start">
+            <label for="dgb" class="col-form-label">Product Name:</label>
+            <input type="text" class="form-control" asp-for="Name" readonly>
+        </div>
+        <div class="col-md-4 text-start">
+            <label for="quantity" class="col-form-label">Quantity:</label>
+            <input type="text" class="form-control" asp-for="Quantity" readonly>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 text-start">
+            <label for="title" class="col-form-label">Title:</label>
+            <input type="text" class="form-control" asp-for="Title" readonly>
+        </div>
+        <div class="col-md-8 text-start">
+            <label for="content" class="col-form-label">Content:</label>
+            <input type="text" class="form-control" asp-for="ContentPost" readonly>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 text-start">
+            <label for="price" class="col-form-label">Price:</label>
+            <input type="text" class="form-control" asp-for="Price" readonly>
+        </div>
+        <div class="col-md-4 text-start">
+            <label for="cateId" class="col-form-label">Category Id:</label>
+            <input type="text" class="form-control" asp-for="CategoryId" readonly>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 text-start">
+            <label for="imgE" class="col-form-label">Image:</label>
+            <img type="file" style="height:200px; width:auto" src="@Model.ImgKey" class="form-control" id="imgE" name="img" />
+        </div>
+    </div>
