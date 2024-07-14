@@ -143,15 +143,9 @@
     <div class="col-md-12 text-center">
         <form id="paginationForm" method="post" action="@Url.Action("Paging", "Student")">
             <input type="hidden" name="pageNumber" value="@currentPage" />
-            <button type="submit" name="direction" value="prev" class="btn btn-secondary"
-            @if (currentPage == 1)
-            {
-                <text>disabled</text>
-            }>Previous</button>
+            <button type="submit" name="direction" value="prev" class="btn btn-secondary">Previous</button>
             <button type="submit" name="direction" value="next" class="btn btn-secondary" @if (currentPage == totalPages)
-            {
-                <text>disabled</text>
-            }>Next</button>
+            >Next</button>
         </form>
     </div>
 </div>
