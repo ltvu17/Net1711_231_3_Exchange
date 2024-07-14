@@ -192,7 +192,7 @@ namespace ExchangeWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Search(string Name, string Address, string Phone, string UserId)
+        public async Task<IActionResult> Search(string Name, string Address, string Phone, string Status)
         {
             try
             {
@@ -222,10 +222,10 @@ namespace ExchangeWebApp.Controllers
                 {
                     studenslist = studenslist.Where(u => u.Phone.Contains(Phone)).ToList();
                 }
-
-                if (!string.IsNullOrEmpty(UserId))
+                int statusInput = int.Parse(Status);
+                if (!string.IsNullOrEmpty(Status))
                 {
-                    studenslist = studenslist.Where(u => u.UserId == UserId).ToList();
+                    studenslist = studenslist.Where(u => u.Status == statusInput).ToList();
                 }
                 var today = DateTime.Now;
                 var firstDayOfCurrentMonth = new DateTime(today.Year, today.Month, 1);
