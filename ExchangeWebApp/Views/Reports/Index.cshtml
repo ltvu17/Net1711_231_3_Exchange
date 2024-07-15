@@ -261,8 +261,13 @@
                         }
                     }
                 });
-                $('.tblList').html(html);
-                loadData(1);
+                if (searchList.length == 0) {
+                    $('.tblList').html('<tr><td colspan="11">No data available</td></tr>');
+                    $('#pagination ul').empty();
+                } else {
+                    $('.tblList').html(html);
+                    loadData(1);
+                }
             }
         }
         function add() {

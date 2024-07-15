@@ -350,8 +350,14 @@
                             }
                         }
                     });
-                    $('.tblTopUpList').html(html);
-                    loadData(1);
+                    if (searchList.length == 0) {
+                        $('.tblTopUpList').html('<tr><td colspan="11">No data available</td></tr>');
+                        $('#pagination ul').empty();
+                    } else {
+                        $('.tblTopUpList').html(html);
+                        loadData(1);
+                    }
+                    
                 }
             }
             function edit(id) {
