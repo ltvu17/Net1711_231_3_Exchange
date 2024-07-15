@@ -108,9 +108,17 @@ namespace ExchangeWebApp.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var item = exchange.Where(s=>s.Id == id).FirstOrDefault();
+            var item = exchange.Where(s => s.Id == id).FirstOrDefault();
             return PartialView("Edit", item);
         }
+
+        [HttpGet]
+        public IActionResult Detail(int id)
+        {
+            var item = exchange.Where(s => s.Id == id).FirstOrDefault();
+            return PartialView("Detail", item);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateExchange(ExchangeDTO entity)
         {

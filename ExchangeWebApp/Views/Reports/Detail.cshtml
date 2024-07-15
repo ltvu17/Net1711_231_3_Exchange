@@ -1,0 +1,44 @@
+﻿@model ReportDTO
+
+<div class="form-group row">
+    <div class="col-md-6">
+        <label for="1">Reporter</label>
+        @Html.EditorFor(model => model.Reporter, new { htmlAttributes = new { @class = "form-control", @type = "text", @readonly = "readonly" } })
+    </div>
+    <div class="col-md-6">
+        <label for="1">Assignee</label>
+        @Html.EditorFor(model => model.Assignee, new { htmlAttributes = new { @class = "form-control", @type = "text", @readonly = "readonly" } })
+    </div>
+    <div class="col-md-6">
+        <label for="1">Product</label>
+        @Html.EditorFor(model => model.ProductId, new { htmlAttributes = new { @class = "form-control", @type = "text", @readonly = "readonly" } })
+    </div>
+    <div class="col-md-6">
+        <label for="1">Approve By</label>
+        @Html.EditorFor(model => model.ApproveBy, new { htmlAttributes = new { @class = "form-control", @type = "text", @readonly = "readonly" } })
+    </div>
+    <div class="col-md-6">
+        <label for="1">Status</label>
+        @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @class = "form-control", @type = "text", @readonly = "readonly" } })
+    </div>
+</div>
+<div class="col-md-6">
+    <label for="1">Report Time</label>
+    @Html.EditorFor(model => model.ReportTime, new { htmlAttributes = new { @class = "form-control", @type = "date", @readonly = "readonly" } })
+    @Html.ValidationMessageFor(model => model.ReportTime, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">Approve Time</label>
+    @Html.EditorFor(model => model.ApproveTime, new { htmlAttributes = new { @class = "form-control", @type = "date", @readonly = "readonly" } })
+    @Html.ValidationMessageFor(model => model.ApproveTime, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">Reason</label>
+    @Html.EditorFor(model => model.Reason, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+    @Html.ValidationMessageFor(model => model.Reason, "", new { @class = "text-danger" })
+</div>
+<div class="col-md-6">
+    <label for="1">Reply</label>
+    @Html.EditorFor(model => model.Reply, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+    @Html.ValidationMessageFor(model => model.Reply, "", new { @class = "text-danger" })
+</div>

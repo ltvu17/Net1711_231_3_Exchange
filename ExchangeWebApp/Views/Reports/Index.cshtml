@@ -8,12 +8,7 @@
         <h2 class="display-8">Booking List</h2>
     </div>
     <div class="col-md-10 text-end d-flex justify-content-between">
-        <input type="text" class="form-control m-1" id="keyFind" placeholder="Search...." />
-        <select id="methodFind" class="form-control m-1" style="width:90px">
-            <option value="1">Reporter</option>
-            <option value="2">Assignee </option>
-            <option value="3">Product</option>
-        </select>
+        <input type="text" class="form-control m-1" id="keyFind" placeholder="ReporterId,Reason,ProductId" />
         <button class="btn btn-primary m-1" id="btnFind" style="min-width:80px" type="button" onclick="searchProduct()">Search</button>
     </div>
     <div class="col-md-2 text-end">
@@ -77,21 +72,44 @@
     </div>
 </div>
 
+<div class="modal fade" id="exchangeModalDetail" tabindex="-1" aria-labelledby="exchangeModalLabelDetail" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exchangeModalLabelDetail">Topup Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="exchangeModalContentDetail"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script type="text/javascript">
         var loadedList = [];
         $(document).ready(function () {
             loadData(1);
         });
-
+        var searchList = [];
         function loadData(page) {
             var pageSize = 5;
-            $.ajax({
-                url: '@Url.Action("GetAll", "Reports")',
-                type: "GET",
-                success: function (result) {
-                    var html = '';
-
+            if (searchList.length == 0) {
+                $.ajax({
+                    url: '@Url.Action("GetAll", "Reports")',
+                    type: "GET",
+                    success: function (result) {
+                        var html = '';
                         var startIndex = (page - 1) * pageSize;
                         var endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
                         var currentPageItems = result.slice(startIndex, endIndex + 1);
@@ -109,7 +127,7 @@
                                 html += '<td>' + item.approveTime + '</td>';
                                 html += '<td>' + item.reply + '</td>';
                                 html += '<td>' + item.status + '</td>';
-                                html += '<td><button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                                html += '<td><button type="button" class="btn btn-outline-primary" onclick="detail(\'' + item.id + '\')">Detail</button> |<button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
                                 html += '</tr>';
                             });
 
@@ -121,12 +139,44 @@
                             $('.tblList').html('<tr><td colspan="11">No data available</td></tr>');
                             $('#pagination ul').empty();
                         }
-                },
-                error: function (xhr, error) {
-                    alert(xhr.statusText);
-                    alert(`Something went wrong!`);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                        alert(`Something went wrong!`);
+                    }
+                });
+            } else {
+                var html = '';
+                var startIndex = (page - 1) * pageSize;
+                var endIndex = Math.min(startIndex + pageSize - 1, searchList.length - 1);
+                var currentPageItems = searchList.slice(startIndex, endIndex + 1);
+                if (currentPageItems.length > 0) {
+                    $.each(currentPageItems, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.id + '</td>';
+                        html += '<td>' + item.reporter + '</td>';
+                        html += '<td>' + item.assignee + '</td>';
+                        html += '<td>' + item.productId + '</td>';
+                        html += '<td>' + item.reportTime + '</td>';
+                        html += '<td>' + item.reason + '</td>';
+                        html += '<td>' + item.approveBy + '</td>';
+                        html += '<td>' + item.approveTime + '</td>';
+                        html += '<td>' + item.reply + '</td>';
+                        html += '<td>' + item.status + '</td>';
+                        html += '<td><button type="button" class="btn btn-outline-primary" onclick="detail(\'' + item.id + '\')">Detail</button> |<button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                        html += '</tr>';
+                    });
+
+                    $('.tblList').html(html);
+                    var totalCount = searchList.length;
+                    var totalPages = Math.ceil(totalCount / pageSize);
+                    renderPagination(page, totalPages);
+                } else {
+                    $('.tblList').html('<tr><td colspan="11">No data available</td></tr>');
+                    $('#pagination ul').empty();
                 }
-            });
+            }
+            
         }
         function renderPagination(currentPage, totalPages) {
             var paginationHtml = '';
@@ -141,35 +191,80 @@
             $('#pagination ul').html(paginationHtml);
         }
         function searchProduct() {
+            searchList = [];
             var keyF = document.getElementById("keyFind").value ? document.getElementById("keyFind").value : " ";
-            var methodF = document.getElementById("methodFind").value ? document.getElementById("methodFind").value : 0;
-            if (keyF == " " || methodF == 0) loadData(1);
+            if (keyF == " " || methodF == 0) {
+                loadData(1);
+            }
             else {
+                var split = keyF.split(",");
+                var methodF = split.length;
                 var html = '';
                 $.each(loadedList, function (key, item) {
-                    var value;
-                    if (methodF == 1) value = item.reporter.toString();
-                    else if (methodF == 2) value = item.assignee.toString();
-                    else if (methodF == 3) value = item.productId.toString();
-                    console.log(html)
-                    if (value.toLowerCase().includes(keyF.toLowerCase())) {
-                        html += '<tr>';
-                        html += '<td>' + item.id + '</td>';
-                        html += '<td>' + item.reporter + '</td>';
-                        html += '<td>' + item.assignee + '</td>';
-                        html += '<td>' + item.productId + '</td>';
-                        html += '<td>' + item.reportTime + '</td>';
-                        html += '<td>' + item.reason + '</td>';
-                        html += '<td>' + item.approveBy + '</td>';
-                        html += '<td>' + item.approveTime + '</td>';
-                        html += '<td>' + item.reply + '</td>';
-                        html += '<td>' + item.status + '</td>';
-                        html += '<td><button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
-                        html += '</tr>';
+                    var value1, value2, value3;
+                    if (methodF == 1) {
+                        value1 = item.reporter.toString();
+                        if (value1.toLowerCase().includes(split[0].toLowerCase())) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.reporter + '</td>';
+                            html += '<td>' + item.assignee + '</td>';
+                            html += '<td>' + item.productId + '</td>';
+                            html += '<td>' + item.reportTime + '</td>';
+                            html += '<td>' + item.reason + '</td>';
+                            html += '<td>' + item.approveBy + '</td>';
+                            html += '<td>' + item.approveTime + '</td>';
+                            html += '<td>' + item.reply + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td><button type="button" class="btn btn-outline-primary" onclick="detail(\'' + item.id + '\')">Detail</button> |<button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
+                    }
+                    else if (methodF == 2) {
+                        value1 = item.reporter.toString();
+                        value2 = item.reason.trim();
+                        if (value1.toLowerCase().includes(split[0].toLowerCase()) && value2.toLowerCase().includes(split[1].toLowerCase())) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.reporter + '</td>';
+                            html += '<td>' + item.assignee + '</td>';
+                            html += '<td>' + item.productId + '</td>';
+                            html += '<td>' + item.reportTime + '</td>';
+                            html += '<td>' + item.reason + '</td>';
+                            html += '<td>' + item.approveBy + '</td>';
+                            html += '<td>' + item.approveTime + '</td>';
+                            html += '<td>' + item.reply + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td><button type="button" class="btn btn-outline-primary" onclick="detail(\'' + item.id + '\')">Detail</button> |<button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
+                    }
+                    else if (methodF == 3) {
+                        value1 = item.reporter.toString();
+                        value2 = item.reason.trim();
+                        value3 = item.productId.toString();
+                        if (value1.toLowerCase().includes(split[0].toLowerCase()) && value2.toLowerCase().includes(split[1].toLowerCase()) && value3.toLowerCase().includes(split[2].toLowerCase())) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.reporter + '</td>';
+                            html += '<td>' + item.assignee + '</td>';
+                            html += '<td>' + item.productId + '</td>';
+                            html += '<td>' + item.reportTime + '</td>';
+                            html += '<td>' + item.reason + '</td>';
+                            html += '<td>' + item.approveBy + '</td>';
+                            html += '<td>' + item.approveTime + '</td>';
+                            html += '<td>' + item.reply + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td><button type="button" class="btn btn-outline-primary" onclick="detail(\'' + item.id + '\')">Detail</button> |<button type="button" class="btn btn-outline-primary" onclick="edit(\'' + item.id + '\')">Edit</button> | <button type="button" class="btn btn-outline-danger" onclick="deleteItem(\'' + item.id + '\')">Delete</button></td>';
+                            html += '</tr>';
+                            searchList.push(item);
+                        }
                     }
                 });
                 $('.tblList').html(html);
-                $('#pagination ul').empty();
+                loadData(1);
             }
         }
         function add() {
@@ -244,6 +339,26 @@
 
             return isoDateTime;
         }
+
+        function detail(id) {
+            $("#exchangeModalContentDetail").html("");
+            $("#exchangeModalLabelDetail").html(`Detail Report [${id}]`);
+            $.ajax({
+                url: '@Url.Action("Detail", "Reports")' + '/' + id,
+                type: "GET",
+                success: function (result) {
+                    $("#exchangeModalContentDetail").html(result);
+                    $('#exchangeModalDetail').modal('show');
+                    $("#btSave").off("click").on("click", function () {
+                        update(id);
+                    });
+                },
+                error: function (message) {
+                    alert(message);
+                }
+            });
+        }
+
         function edit(id) {
             $("#exchangeModalContent").html("");
             $("#exchangeModalLabel").html(`Edit Report [${id}]`);

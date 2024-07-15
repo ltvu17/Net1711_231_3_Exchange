@@ -23,7 +23,7 @@ namespace ExchangeWebAPI.Controllers
             {
                 return BadRequest(id);
             }
-            return Ok(result);
+            return Ok(result.Data);
         }
         [HttpGet("GetAllReport")]
         public async Task<IActionResult> GetAllReport()

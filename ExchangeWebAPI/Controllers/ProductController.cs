@@ -60,6 +60,20 @@ namespace ExchangeWebAPI.Controllers
             }
             return Ok(result);
         }
+
+        [HttpPost]
+        [Route("InactiveProduct")]
+        public async Task<IActionResult> InactiveProduct(Product product)
+        {
+            product.Status = 0;
+            var result = await _business.UpdateProduct(product);
+            if (result is null || result.Status == -4)
+            {
+                return BadRequest();
+            }
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("UploadImg")]
         public async Task<IActionResult> UploadImgProduct(int Id, IFormFile img)
