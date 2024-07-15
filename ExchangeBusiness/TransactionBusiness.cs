@@ -124,7 +124,7 @@ namespace ExchangeBusiness
                     transactionExist.Note = transaction.Note;
                     transactionExist.Price = transaction.Price;
                     transactionExist.CreateAt = DateTime.Now;
-                    transactionExist.StudentBuy = 1;
+                    transactionExist.StudentBuy = transaction.StudentBuy;
                     transactionExist.TotalPrice = transaction.Price * transaction.Quantity;
                     transactionExist.TypeTransactions = transaction.TypeTransactions;
                     await _unitOfWork.TransactionRepository.UpdateAsync(transactionExist);

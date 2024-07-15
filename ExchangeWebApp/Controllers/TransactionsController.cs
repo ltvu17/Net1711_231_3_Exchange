@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Text;
 using ExchangeWebApp.Models;
+using ExchangeData.DTO;
+using Microsoft.IdentityModel.Tokens;
+using ExchangeData.Models;
 
 namespace ExchangeWebMVC.Controllers
 {
@@ -148,7 +151,7 @@ namespace ExchangeWebMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var API_URL_ENDPOINT = "https://localhost:44362/api/Transaction";
+            var API_URL_ENDPOINT = "https://localhost:7134/api/Transaction";
 
             using (var httpClient = new HttpClient())
             {
@@ -167,7 +170,7 @@ namespace ExchangeWebMVC.Controllers
             return Json(new { status = -1, message = "Action fail" });
         }
         [HttpPost]
-        public async Task<List<TransactionDTO>> Search([FromForm] string orderCode)
+        public async Task<List<TransactionDTO>> Search([FromForm] string orderCode, string productId, string Price)
         {
             try
             {
@@ -185,9 +188,20 @@ namespace ExchangeWebMVC.Controllers
                         }
                     }
                 }
-
-                var transactionsNew = transactions.Where(p => p.Id == Int32.Parse(orderCode)).ToList();
-                return transactionsNew;
+                if(!orderCode.IsNullOrEmpty())
+                {
+                    transactions = transactions.Where(p => p.Id == Int32.Parse(orderCode)).ToList();
+                }
+                if (!productId.IsNullOrEmpty())
+                {
+                    transactions = transactions.Where(p => p.ProductId == Int32.Parse(productId)).ToList();
+                }
+                if (!Price.IsNullOrEmpty())
+                {
+                    transactions = transactions.Where(p => p.Price == Double.Parse(Price)).ToList();
+                }
+                
+                return transactions;
             }
             catch (Exception ex)
             {
@@ -195,10 +209,11 @@ namespace ExchangeWebMVC.Controllers
             }
         }
         [HttpPut]
-        public async Task<ExchangeResult> Update([FromBody] TransactionDTO updateTransaction)
+        public async Task<ExchangeResult> Update([FromBody] UpdateTransactionDTO updateTransaction)
         {
             try
             {
+                
                 using (var httpClient = new HttpClient())
                 {
                     var json = JsonConvert.SerializeObject(updateTransaction);

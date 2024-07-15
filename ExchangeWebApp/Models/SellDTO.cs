@@ -1,4 +1,6 @@
-﻿namespace ExchangeWebApp.Models
+﻿
+
+namespace ExchangeWebApp.Models
 {
     public class SellDTO
     { 

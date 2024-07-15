@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Text;
 using ExchangeWebApp.Models;
+using ExchangeWebApi.DTO;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ExchangeWebMVC.Controllers
 {
@@ -64,7 +66,7 @@ namespace ExchangeWebMVC.Controllers
            
             try
             {
-                var API_URL_ENDPOINT = "https://localhost:44362/api/Sell";
+                var API_URL_ENDPOINT = "https://localhost:7134/api/Sell";
                 using (var httpClient = new HttpClient()) 
                 {
                     using (var response = await httpClient.GetAsync($"{API_URL_ENDPOINT}/GetById/{id}"))
@@ -91,7 +93,7 @@ namespace ExchangeWebMVC.Controllers
         }
        
         [HttpPost]
-        public async Task<ExchangeResult> Create([FromBody] SellDTO sellDTO)
+        public async Task<ExchangeResult> Create([FromBody] CreateSellDTO sellDTO)
         {
             try
             {
@@ -127,7 +129,7 @@ namespace ExchangeWebMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var API_URL_ENDPOINT = "https://localhost:44362/api/Sell";
+            var API_URL_ENDPOINT = "https://localhost:7134/api/Sell" ;
 
             using (var httpClient = new HttpClient()) 
             {
@@ -146,7 +148,7 @@ namespace ExchangeWebMVC.Controllers
             return Json(new { status = -1, message = "Action fail" });
         }
         [HttpPut]
-        public async Task<ExchangeResult> Update([FromBody] SellDTO updateSellRequestDto)
+        public async Task<ExchangeResult> Update([FromBody] UpdateSellDTO updateSellRequestDto)
         {
             try
             {
@@ -177,7 +179,7 @@ namespace ExchangeWebMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<List<SellDTO>> Search([FromForm] string orderCode)
+        public async Task<List<SellDTO>> Search([FromForm] string orderCode, string Code , string Price)
         {
             try
             {
@@ -197,8 +199,23 @@ namespace ExchangeWebMVC.Controllers
                         }
                     }
                 }
-
-                var sellExist = sells.Where(p => p.Id == Int32.Parse(orderCode)).ToList();
+                var sellExist = new List<SellDTO>();
+                if(!orderCode.IsNullOrEmpty())
+                {
+                    sellExist = sells.Where(p => p.Id == Int32.Parse(orderCode)).ToList();
+                }
+                if (!Code.IsNullOrEmpty())
+                {
+                    sellExist= sellExist.Where(p => p.TransactionId == Int32.Parse(Code)).ToList();
+                }
+                if (!Price.IsNullOrEmpty())
+                {
+                    sellExist= sellExist.Where(p => p.TotalPrice == Double.Parse(Price)).ToList();
+                }
+                if (orderCode.IsNullOrEmpty() && Code.IsNullOrEmpty() && Price.IsNullOrEmpty())
+                {
+                    return sells;
+                }
                 return sellExist;
             }
             catch (Exception ex)
