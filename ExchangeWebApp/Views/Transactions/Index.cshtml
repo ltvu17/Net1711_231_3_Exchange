@@ -12,6 +12,9 @@
     </div>
     <div class="col-md-2 text-end">
         <input type="text" id="orderCode" placeholder="Enter Transaction Code">
+        <input type="text" id="productId" placeholder="Enter productId">
+        <input type="text" id="price" placeholder="Enter price">
+
         <button onclick="searchOrder()">Search</button>
         <button type="button" class="btn btn-primary" onclick="add();">
             Add
@@ -182,7 +185,7 @@
                 note: $("#Note").val(),
                 price: $("#Price").val(),
                 studentBuy: $("#StudentBuy").val(),
-                totalPrice: $("#TotalPrice").val(),
+                status: $("#Status").val(),
                 typeTransactions: $("#TypeTransactions").val()
             };
 
@@ -230,10 +233,13 @@
         function searchOrder() {
 
             const orderCode = document.getElementById('orderCode').value;
+            const productId = document.getElementById('productId').value;
+            const price = document.getElementById('price').value;
+
             $.ajax({
                 url: '@Url.Action("Search", "Transactions")',
                 type: "POST",
-                data: { orderCode: orderCode },
+                data: { orderCode: orderCode, productId: productId, Price: price },
                 success: function (result) {
                     var html = '';
                     $.each(result, function (key, item) {
