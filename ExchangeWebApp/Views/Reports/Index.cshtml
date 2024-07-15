@@ -72,24 +72,22 @@
     </div>
 </div>
 
-<div class="modal fade" id="exchangeModalDetail" tabindex="-1" aria-labelledby="exchangeModalLabelDetail" aria-hidden="true">
+<div class="modal fade" id="exchangeModalDetail1" tabindex="-1" aria-labelledby="exchangeModalLabelDetail1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exchangeModalLabelDetail">Topup Title</h5>
+                    <h5 class="modal-title" id="exchangeModalLabelDetail1">Topup Title</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="exchangeModalContentDetail"></div>
+                    <div id="exchangeModalContentDetail1"></div>
                 </div>
                 <div class="modal-footer">
-                    <button id="btSave" type="button" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
-
             }
         </div>
     </div>
@@ -341,14 +339,14 @@
         }
 
         function detail(id) {
-            $("#exchangeModalContentDetail").html("");
-            $("#exchangeModalLabelDetail").html(`Detail Report [${id}]`);
+            $("#exchangeModalContentDetail1").html("");
+            $("#exchangeModalLabelDetail1").html(`Detail Report [${id}]`);
             $.ajax({
                 url: '@Url.Action("Detail", "Reports")' + '/' + id,
                 type: "GET",
                 success: function (result) {
-                    $("#exchangeModalContentDetail").html(result);
-                    $('#exchangeModalDetail').modal('show');
+                    $("#exchangeModalContentDetail1").html(result);
+                    $('#exchangeModalDetail1').modal('show');
                     $("#btSave").off("click").on("click", function () {
                         update(id);
                     });

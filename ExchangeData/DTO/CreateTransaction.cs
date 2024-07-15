@@ -12,7 +12,6 @@ namespace ExchangeData.DTO
         public int Quantity { get; set; }
         public string? Note { get; set; }
         public double Price { get; set; }
-        public int StudentBuy {  get; set; }
         public string? TypeTransactions { get; set; }
 
     }

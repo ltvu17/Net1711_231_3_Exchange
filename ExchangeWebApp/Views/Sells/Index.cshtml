@@ -11,7 +11,10 @@
         <h3 class="display-8">TopUp List</h3>
     </div>
     <div class="col-md-2 text-end">
-        <input type="text" id="orderCode" placeholder="Enter Sell Code">
+        <input type="text" id="orderCode" placeholder="Search Sell Code">
+        <input type="text" id="Code" placeholder="Search transaction id">
+        <input type="text" id="Price" placeholder="Search price">
+
         <button onclick="searchOrder()">Search</button>
         <button type="button" class="btn btn-primary" onclick="add();">
             Add
@@ -25,16 +28,14 @@
             <thead>
                 <tr class="card-header">
                     <th class="card-title text-center">Id</th>
-                    <th class="card-title text-center">Payment method</th>
-                    <th class="card-title text-center">transactionId</th>
-                    <th class="card-title text-center">create on</th>
-                    <th class="card-title text-center">cash customer pay</th>
-                    <th class="card-title text-center">cash Back</th>
-                    <th class="card-title text-center">total price</th>
-                    <th class="card-title text-center">status</th>
+                    <th class="card-title text-center">Payment Method</th>
+                    <th class="card-title text-center">TransactionId</th>
+                    <th class="card-title text-center">Status</th>
+                    <th class="card-title text-center">CashCustomerPay</th>
+                    <th class="card-title text-center">CreateOn</th>
+                    <th class="card-title text-center">CashBack</th>
+                    <th class="card-title text-center">TotalPrice</th>
                     <th class="card-title text-center">Note</th>
-                    <th class="card-title text-center">View</th>
-
                 </tr>
             </thead>
             <tbody class="tblTopUpList">
@@ -42,7 +43,6 @@
         </table>
     </div>
 </div>
-
 
 <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -70,13 +70,11 @@
     <script type="text/javascript">
         $(document).ready(function () {
             loadData();
-
-
         });
 
         function loadData() {
             $.ajax({
-                url: '@Url.Action("GetAll", "Sells")',//(method,nameController)
+                url: '@Url.Action("GetAll", "Sells")',
                 type: "GET",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -84,16 +82,23 @@
                     var html = '';
                     $.each(result, function (key, item) {
                         html += '<tr>';
+                       
                         html += '<td>' + item.id + '</td>';
-                        html += '<td>' + item.paymentMethod + '</td>';
+                        html += '<td>' + item.payment + '</td>';
                         html += '<td>' + item.transactionId + '</td>';
-                        html += '<td>' + item.createOn + '</td>';
+                        if (item.status === 0) {
+                            html += '<td>success</td>';
+                        } else if (item.status === 1) {
+                            html += '<td>fail</td>';
+                        } 
                         html += '<td>' + item.cashCustomerPay + '</td>';
+                        html += '<td>' + item.createOn + '</td>';
                         html += '<td>' + item.cashBack + '</td>';
                         html += '<td>' + item.totalPrice + '</td>';
-                        html += '<td>' + item.status + '</td>';
                         html += '<td>' + item.note + '</td>';
-                        html += '<td><a href="#" onclick="return edit(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="delele(\'' + item.id + '\')">Delete</a></td>'; html += '</tr>';
+
+                        html += '<td><a href="#" onclick="return edit(' + item.id + ')">Edit</a> | <a href="#" onclick="deleteTransaction(' + item.id + ')">Delete</a></td>';
+                        html += '</tr>';
                     });
                     $('.tblTopUpList').html(html);
                 },
@@ -185,6 +190,7 @@
                 transactionId: $("#TransactionId").val(),
                 status: $("#Status").val(),
                 note: $("#Note").val(),
+                totalPrice: $("#TotalPrice").val(),
                 cashCustomerPay: $("#CashCustomerPay").val(),
 
             };
@@ -208,7 +214,7 @@
                 }
             });
         }
-        function delele(id) {
+        function deleteTransaction(id) {
             var result = confirm("Are you sure to delete?");
             if (result) {
                 var formData = new FormData();
@@ -235,30 +241,28 @@
         }
         function searchOrder() {
             const orderCode = document.getElementById('orderCode').value;
+            const Code = document.getElementById('Code').value;
+            const Price = document.getElementById('Price').value;
+
             $.ajax({
                 url: '@Url.Action("Search", "Sells")',
                 type: "POST",
-                data: { orderCode: orderCode },
+                data: { orderCode: orderCode, code: Code, Price: Price },
                 success: function (result) {
                     var html = '';
                     $.each(result, function (key, item) {
                         html += '<tr>';
+
                         html += '<td>' + item.id + '</td>';
-                        if (item.status === 0) {
-                            html += '<td>Pending</td>';
-                        } else if (item.status === 1) {
-                            html += '<td>Completed</td>';
-                        } else {
-                            html += '<td>Cancelled</td>';
-                        }
-                        html += '<td>' + item.productId + '</td>';
-                        html += '<td>' + item.quantity + '</td>';
-                        html += '<td>' + item.note + '</td>';
-                        html += '<td>' + item.price + '</td>';
-                        html += '<td>' + item.createAt + '</td>';
-                        html += '<td>' + item.studentBuy + '</td>';
+                        html += '<td>' + item.payment + '</td>';
+                        html += '<td>' + item.transactionId + '</td>';
+                        html += '<td>' + item.status + '</td>';
+                        html += '<td>' + item.cashCustomerPay + '</td>';
+                        html += '<td>' + item.createOn + '</td>';
+                        html += '<td>' + item.cashBack + '</td>';
                         html += '<td>' + item.totalPrice + '</td>';
-                        html += '<td>' + item.typeTransactions + '</td>';
+                        html += '<td>' + item.note + '</td>';
+
                         html += '<td><a href="#" onclick="return edit(' + item.id + ')">Edit</a> | <a href="#" onclick="deleteTransaction(' + item.id + ')">Delete</a></td>';
                         html += '</tr>';
                     });
@@ -271,4 +275,4 @@
         }
     </script>
 }
-
+Đang hiển thị 3474462439810682842.

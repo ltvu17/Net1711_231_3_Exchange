@@ -14,37 +14,39 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-
-                <input asp-for="Status" class="form-control" type ="hidden"/>
+                <input asp-for="Status" class="form-control" type="hidden" />
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProductId" class="control-label" onchange="fetchProductPrice()"></label>
-                <select id="ProductId" class="form-control"></select>
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" class="form-control" id="ProductId" onchange="fetchProductPrice()">
+                </select>
                 @Html.ValidationMessageFor(model => model.ProductId, "", new { @class = "text-danger" })
-
             </div>
             <div class="form-group">
                 <label asp-for="Quantity" class="control-label"></label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
+            </div
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" readonly/>
+                <input asp-for="Price" class="form-control Price"/>
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Note" class="control-label"></label>
-                <input asp-for="Note" class="form-control" />
+                <input asp-for="Note" class="form-control"/>
                 <span asp-validation-for="Note" class="text-danger"></span>
             </div>
-            
+            <input type="hidden" asp-for="StudentBuy" />
+            <input type="hidden" asp-for="Status" />
+
             <div class="form-group">
                 <label asp-for="TypeTransactions" class="control-label"></label>
-                <input asp-for="TypeTransactions" class="form-control" />
+                <input asp-for="TypeTransactions" class="form-control"/>
                 <span asp-validation-for="TypeTransactions" class="text-danger"></span>
             </div>
+            
         </form>
     </div>
 </div>
@@ -55,66 +57,63 @@
 
 <script>
     $(document).ready(function () {
-        getAllCourt(@Model.ProductId);
+        getAllProducts(@Model.ProductId);
     });
 
-    function getAllCourt(selectedProductId) {
-        var productId = $('#ProductId').val();
-
+    function getAllProducts(selectedProductId) {
         $.ajax({
-            url: '@Url.Action("GetAll", "Products")',
+            url: '@Url.Action("GetAll", "Product")',
             type: "GET",
-            data: { productId: productId },
-            contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
                 // Clear previous options
                 $('#ProductId').empty();
-                // Add each court as an option to the dropdown list
+                // Add each product as an option to the dropdown list
                 $.each(result, function (key, item) {
                     $('#ProductId').append($('<option>', {
                         value: item.id,
                         text: item.name,
-                        selected: item.id === selectedProductId
+                        selected: item.id === selectedProductId,
                     }));
-                    $('#Price').append($('<option>', {
-                        value: item.id,
-                        text: item.name,
-                        selected: item.id === selectedProductId
-                    }));
+                    
                 });
+                
             },
             error: function (xhr, error) {
-                alert(xhr.statusText);
-                alert('Something went wrong!');
+                console.error('Error fetching products:', error);
+                alert('Something went wrong while fetching products!');
             }
         });
     }
+
     function fetchProductPrice() {
         var productId = $('#ProductId').val();
+        console.log("Fetching price for productId:", productId); // Logging for debugging
+
         $.ajax({
-            url: '@Url.Action("GetPrice", "Products")',
+            url: '@Url.Action("GetProductById", "Product")',
             type: "GET",
-            data: { productId: productId },
-            contentType: "application/json;charset=utf-8",
+            data: { id: productId },
             dataType: "json",
             success: function (result) {
-                if (result.success) {
-                    $('#ProductPrice').text(result.price);
-                } else {
-                    alert(result.message);
-                }
-            },
+                    if (result && result.price !== undefined) {
+                        console.log("Price fetched:", result.price); // Logging for debugging
+                        $('#Price').val(result.price);
+                    } else {
+                        console.error('Error in result:', result.message);
+                        alert(result.message || 'Error fetching price');
+                    }
+                },
             error: function (xhr, error) {
-                alert(xhr.statusText);
-                alert('Something went wrong!');
+                console.error('Error fetching price:', error);
+                alert('Something went wrong while fetching price!');
             }
         });
     }
-    // Initialize the product list on page load
-
-
 </script>
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

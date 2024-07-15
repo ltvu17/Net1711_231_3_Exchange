@@ -1,4 +1,4 @@
-﻿@model ReportDTO
+﻿@* @model ReportDTO
 
 <div class="form-group row">
     <div class="col-md-6">
@@ -41,4 +41,71 @@
     <label for="1">Reply</label>
     @Html.EditorFor(model => model.Reply, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
     @Html.ValidationMessageFor(model => model.Reply, "", new { @class = "text-danger" })
+</div> *@
+
+ @model ReportDTO
+@{
+    ViewData["Title"] = "Report Detail";
+}
+
+<h1>Report Detail</h1>
+
+<div>
+    <h3>Report #@Model.Id</h3>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Reporter
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Reporter
+        </dd>
+        <dt class="col-sm-2">
+            Assignee
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Assignee
+        </dd>
+        <dt class="col-sm-2">
+            Product ID
+        </dt>
+        <dd class="col-sm-10">
+            @Model.ProductId
+        </dd>
+        <dt class="col-sm-2">
+            Report Time
+        </dt>
+        <dd class="col-sm-10">
+            @Model.ReportTime.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Reason
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Reason
+        </dd>
+        <dt class="col-sm-2">
+            Approve By
+        </dt>
+        <dd class="col-sm-10">
+            @Model.ApproveBy
+        </dd>
+        <dt class="col-sm-2">
+            Approve Time
+        </dt>
+        <dd class="col-sm-10">
+            @Model.ApproveTime?.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Reply
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Reply
+        </dd>
+        <dt class="col-sm-2">
+            Status
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Status
+        </dd>
+    </dl>
 </div>
