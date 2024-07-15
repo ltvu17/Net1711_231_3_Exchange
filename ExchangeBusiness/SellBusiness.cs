@@ -133,11 +133,15 @@ namespace ExchangeBusiness
                 }
                 else
                 {
-                    new_sell.PaymentMethod = sell.Payment;
+                    new_sell.Payment = sell.Payment;
                     new_sell.TransactionId = sell.TransactionId;
                     new_sell.Status = sell.Status;
+                    new_sell.CashCustomerPay = sell.CashCustomerPay;
+                    new_sell.TotalPrice = sell.TotalPrice;
+                    new_sell.CashBack = sell.CashCustomerPay - sell.TotalPrice;
                     new_sell.CreateOn = DateTime.Now;
                     new_sell.Note = sell.Note;
+                    new_sell.PaymentMethod = sell.Payment;
                     await _unitOfWork.SellRepository.UpdateAsync(new_sell);
                     return new ExchangeResult(Const.SUCCESS_GET, "Update success", sell);
 

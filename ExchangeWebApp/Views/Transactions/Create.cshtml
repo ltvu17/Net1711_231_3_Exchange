@@ -3,9 +3,8 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create Transaction</h1>
 
-<h4>Transaction</h4>
 <hr />
 
 <div class="form-group row">
@@ -29,12 +28,11 @@
     <div class="col-md-6">
         <label for="payment">Type Transaction</label>
         @Html.DropDownListFor(model => model.TypeTransactions, new SelectList(new List<string> { "Sell", "Exchange" }), new { @class = "form-control" })
+
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 <script>
     $(document).ready(function () {
@@ -43,9 +41,8 @@
 
     function getAllProducts(selectedProductId) {
         $.ajax({
-            url: '@Url.Action("GetAll", "Products")',
+            url: '@Url.Action("GetAll", "Product")',
             type: "GET",
-            contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
                 // Clear previous options
@@ -55,42 +52,44 @@
                     $('#ProductId').append($('<option>', {
                         value: item.id,
                         text: item.name,
-                        selected: item.id === selectedProductId
+                        selected: item.id === selectedProductId,
                     }));
+
                 });
 
-                // Trigger the price fetching for the initially selected product
-                fetchProductPrice();
             },
             error: function (xhr, error) {
-                console.error('Error fetching products:', xhr, error);
-                alert('Something went wrong!');
+                console.error('Error fetching products:', error);
+                alert('Something went wrong while fetching products!');
             }
         });
     }
 
     function fetchProductPrice() {
         var productId = $('#ProductId').val();
-        console.log('Fetching price for product ID:', productId); // Debug log
+        console.log("Fetching price for productId:", productId); // Logging for debugging
+
         $.ajax({
-            url: '@Url.Action("GetPrice", "Products")',
+            url: '@Url.Action("GetProductById", "Product")',
             type: "GET",
-            data: { productId: productId },
+            data: { id: productId },
             dataType: "json",
             success: function (result) {
-                console.log('Price fetch result:', result); // Debug log
-                if (result.success) {
+                if (result && result.price !== undefined) {
+                    console.log("Price fetched:", result.price); // Logging for debugging
                     $('#Price').val(result.price);
                 } else {
-                    alert(result.message);
+                    console.error('Error in result:', result.message);
+                    alert(result.message || 'Error fetching price');
                 }
             },
             error: function (xhr, error) {
-                console.error('Error fetching price:', xhr, error);
-                alert('Something went wrong!');
+                console.error('Error fetching price:', error);
+                alert('Something went wrong while fetching price!');
             }
         });
     }
+    
 </script>
 
 @section Scripts {
@@ -98,3 +97,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
