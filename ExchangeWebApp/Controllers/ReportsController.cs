@@ -142,7 +142,7 @@ namespace ExchangeWebApp.Controllers
                     }
                 }
 
-                return PartialView("edit", result);
+                return PartialView("Edit", result);
             }
             catch (Exception ex)
             {
